@@ -15,11 +15,13 @@ npm install typegraphql-prisma-nestjs --save-dev
 ### Functions and classes used in generated files from scheme of [prisma](https://github.com/prisma/prisma), imports from [nestjs](https://nestjs.com)
 
 Original:
+
 ```typescript
 import { Ctx, Query, Resolver } from "type-graphql";
 ```
 
 In fork:
+
 ```typescript
 import { Context, Query, Resolver } from "@nestjs/graphql";
 ```
@@ -38,6 +40,29 @@ Sample application with this feature: https://github.com/EndyKaufman/typegraphql
 
 ```
 @TypeGraphQL.optional(input: ["create", "update"])
+```
+
+### Add support call some async events after request to Prisma
+
+```ts
+setTransformArgsIntoPrismaArgs(async function <
+  TArgs = Record<string, any>,
+  TContext = any,
+>(
+  info: GraphQLResolveInfo,
+  args: TArgs,
+  ctx: TContext,
+  modelName?: string,
+  collectionName?: string,
+  prismaMethod?: string,
+  afterProcessEvents?: ((result: any) => Promise<any>)[],
+): Promise<TArgs> {
+  // ...some logic before request to prisma
+  afterProcessEvents?.push(async function (result) {
+    // ...some logic after request to prisma, variable result store output data
+  });
+  return args;
+});
 ```
 
 ## Example use NestJS + Prisma2 + Typegraphql

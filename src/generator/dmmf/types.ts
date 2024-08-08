@@ -1,50 +1,55 @@
 import { InputOmitSetting } from "../config";
 
+export type ReadonlyDeep<O> = {
+  +readonly [K in keyof O]: ReadonlyDeep<O[K]>;
+};
+
 export namespace DMMF {
-  export interface Document {
+  export type Document = ReadonlyDeep<{
     datamodel: Datamodel;
     schema: Schema;
+    // mappings: Mappings;
+    // additional props:
     modelMappings: ModelMapping[];
-  }
-  export interface Enum {
+  }>;
+  export type Enum = ReadonlyDeep<{
     name: string;
     // values: EnumValue[];
     dbName?: string | null;
     // documentation?: string;
-    // additional props
+    // additional props:
     typeName: string;
     docs: string | undefined;
     valuesMap: Array<{ name: string; value: string }>;
-  }
-  export interface Datamodel {
+  }>;
+  export type Datamodel = ReadonlyDeep<{
     models: Model[];
     enums: Enum[];
     types: Model[];
-  }
-  export interface UniqueIndex {
+  }>;
+  export type UniqueIndex = ReadonlyDeep<{
     name: string;
     fields: string[];
-  }
-  export interface PrimaryKey {
+  }>;
+  export type PrimaryKey = ReadonlyDeep<{
     name: string | null;
     fields: string[];
-  }
-  export interface Model {
+  }>;
+  export type Model = ReadonlyDeep<{
     name: string;
     dbName: string | null;
     fields: ModelField[];
-    // fieldMap?: Record<string, Field>;
     uniqueFields: string[][];
     uniqueIndexes: UniqueIndex[];
     // documentation?: string;
     primaryKey: PrimaryKey | null;
-    // [key: string]: any;
-    // additional props
+    // isGenerated?: boolean;
+    // additional props:
     typeName: string;
     docs: string | undefined;
     plural: string | undefined;
     isOmitted: { output: boolean };
-  }
+  }>;
   export type FieldKind = "scalar" | "object" | "enum" | "unsupported";
   export type FieldNamespace = "model" | "prisma";
   export type FieldLocation =
@@ -54,7 +59,7 @@ export namespace DMMF {
     | "enumTypes"
     | "fieldRefTypes";
   // Field
-  export interface ModelField {
+  export type ModelField = ReadonlyDeep<{
     // kind: FieldKind;
     name: string;
     isRequired: boolean;
@@ -69,12 +74,12 @@ export namespace DMMF {
     hasDefaultValue: boolean;
     default?: FieldDefault | FieldDefaultScalar | FieldDefaultScalar[];
     relationFromFields?: string[];
-    relationToFields?: any[];
+    relationToFields?: string[];
     relationOnDelete?: string;
     relationName?: string;
     // documentation?: string;
     // [key: string]: any;
-    // additional props
+    // additional props:
     type: string;
     location: FieldLocation;
     typeFieldAlias?: string;
@@ -89,46 +94,58 @@ export namespace DMMF {
       input: boolean | InputOmitSetting[];
       output: boolean;
     };
-  }
-  export interface FieldDefault {
+  }>;
+  export type FieldDefault = ReadonlyDeep<{
     name: string;
     args: any[];
-  }
+  }>;
   export type FieldDefaultScalar = string | boolean | number;
-  export interface Schema {
+  export type Schema = ReadonlyDeep<{
     rootQueryType?: string;
     rootMutationType?: string;
     inputTypes: InputType[];
     outputTypes: OutputType[];
     enums: Enum[];
-  }
-  export interface Query {
+    // fieldRefTypes: {
+    //   prisma?: FieldRefType[];
+    // };
+  }>;
+  export type Query = ReadonlyDeep<{
     name: string;
     args: SchemaArg[];
     output: QueryOutput;
-  }
-  export interface QueryOutput {
+  }>;
+  export type QueryOutput = ReadonlyDeep<{
     name: string;
     isRequired: boolean;
     isList: boolean;
-  }
+  }>;
+  export type TypeRef<AllowedLocations extends FieldLocation> = {
+    isList: boolean;
+    type: string;
+    location: AllowedLocations;
+    namespace?: FieldNamespace;
+  };
+  export type InputTypeRef = TypeRef<
+    "scalar" | "inputObjectTypes" | "enumTypes" | "fieldRefTypes"
+  >;
   export type ArgType = string | InputType | Enum;
-  export interface SchemaArgInputType {
+  export type SchemaArgInputType = ReadonlyDeep<{
     isList: boolean;
     // type: ArgType;
     location: FieldLocation;
     namespace?: FieldNamespace;
     // additional props
     type: string;
-  }
-  export interface SchemaArg {
+  }>;
+  export type SchemaArg = ReadonlyDeep<{
     name: string;
     comment?: string;
     isNullable: boolean;
     isRequired: boolean;
-    // inputTypes: SchemaArgInputType[];
+    // inputTypes: InputTypeRef[];
     deprecation?: Deprecation;
-    // additional props
+    // additional props:
     selectedInputType: SchemaArgInputType;
     typeName: string;
     typeGraphQLType: string;
@@ -136,53 +153,50 @@ export namespace DMMF {
     hasMappedName: boolean;
     isOmitted: boolean;
     isOptional: boolean;
-  }
-  export interface OutputType {
+  }>;
+  export type OutputType = ReadonlyDeep<{
     name: string;
     // fields: SchemaField[];
-    // fieldMap?: Record<string, SchemaField>;
-    // additional props
+    // additional props:
     fields: OutputSchemaField[];
-    // modelName: string;
     typeName: string;
-  }
-  export interface SchemaField {
+  }>;
+  export type SchemaField = ReadonlyDeep<{
     name: string;
-    // isNullable?: boolean;
-    // outputType: {
-    //   type: string | OutputType | Enum;
-    //   isList: boolean;
-    //   isRequired: boolean;
-    //   kind: FieldKind;
-    // };
-    outputType: TypeInfo;
+    isNullable?: boolean;
+    // outputType: OutputTypeRef;
     args: SchemaArg[];
     deprecation?: Deprecation;
     documentation?: string;
-    // additional props
+    // additional props:
+    outputType: TypeInfo;
     typeGraphQLType: string;
     fieldTSType: string;
     isRequired: boolean;
-  }
-  export interface Deprecation {
+  }>;
+  export type OutputTypeRef = TypeRef<
+    "scalar" | "outputObjectTypes" | "enumTypes"
+  >;
+  export type Deprecation = ReadonlyDeep<{
     sinceVersion: string;
     reason: string;
     plannedRemovalVersion?: string;
-  }
+  }>;
   // named subtype of SchemaField->outputType
-  export interface TypeInfo {
+  export type TypeInfo = ReadonlyDeep<{
     // type: string | OutputType | SchemaEnum;
     isList: boolean;
     location: FieldLocation;
     namespace?: FieldNamespace;
-    // additional props
+    // additional props:
     type: string;
-  }
+  }>;
   // additional type
-  export interface OutputSchemaField extends SchemaField {
-    argsTypeName: string | undefined;
-  }
-  export interface InputType {
+  export type OutputSchemaField = SchemaField &
+    ReadonlyDeep<{
+      argsTypeName: string | undefined;
+    }>;
+  export type InputType = ReadonlyDeep<{
     name: string;
     constraints: {
       maxNumFields: number | null;
@@ -192,11 +206,16 @@ export namespace DMMF {
       source?: string;
     };
     fields: SchemaArg[];
-    // fieldMap?: Record<string, SchemaArg>;
-    // additional props
+    // additional props:
     typeName: string;
-  }
-  export interface ModelMapping {
+  }>;
+  export type FieldRefType = ReadonlyDeep<{
+    name: string;
+    allowTypes: FieldRefAllowType[];
+    fields: SchemaArg[];
+  }>;
+  export type FieldRefAllowType = TypeRef<"scalar" | "enumTypes">;
+  export type ModelMapping = ReadonlyDeep<{
     // model: string;
     // plural: string;
     // findUnique?: string | null;
@@ -206,6 +225,7 @@ export namespace DMMF {
     // findMany?: string | null;
     // createOne?: string | null;
     // createMany?: string | null;
+    // createManyAndReturn?: string | null;
     // updateOne?: string | null;
     // updateMany?: string | null;
     // upsertOne?: string | null;
@@ -223,7 +243,7 @@ export namespace DMMF {
     collectionName: string;
     resolverName: string;
     modelTypeName: string;
-  }
+  }>;
   export enum ModelAction {
     findUnique = "findUnique",
     findUniqueOrThrow = "findUniqueOrThrow",
@@ -232,6 +252,7 @@ export namespace DMMF {
     findMany = "findMany",
     createOne = "createOne",
     createMany = "createMany",
+    createManyAndReturn = "createManyAndReturn",
     updateOne = "updateOne",
     updateMany = "updateMany",
     upsertOne = "upsertOne",
@@ -244,7 +265,7 @@ export namespace DMMF {
     aggregateRaw = "aggregateRaw",
   }
   // additional type
-  export interface Action {
+  export type Action = ReadonlyDeep<{
     name: string;
     fieldName: string;
     kind: ModelAction;
@@ -256,17 +277,18 @@ export namespace DMMF {
     actionResolverName: string;
     returnTSType: string;
     typeGraphQLType: string;
-  }
+  }>;
   // additional type
-  export interface RelationModel {
+  export type RelationModel = ReadonlyDeep<{
     model: Model;
     outputType: OutputType;
     relationFields: RelationField[];
     resolverName: string;
-  }
+  }>;
   // additional type
-  export interface RelationField extends ModelField {
-    outputTypeField: OutputSchemaField;
-    argsTypeName: string | undefined;
-  }
+  export type RelationField = ModelField &
+    ReadonlyDeep<{
+      outputTypeField: OutputSchemaField;
+      argsTypeName: string | undefined;
+    }>;
 }

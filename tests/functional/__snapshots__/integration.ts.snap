@@ -32,6 +32,19 @@ enum Color {
   RED
 }
 
+type CreateManyAndReturnPost {
+  author: User!
+  authorId: Int!
+  color: Color!
+  content: String!
+  uuid: String!
+}
+
+type CreateManyAndReturnUser {
+  id: Int!
+  name: String
+}
+
 input EnumColorFieldUpdateOperationsInput {
   set: Color
 }
@@ -81,6 +94,8 @@ input IntWithAggregatesFilter {
 }
 
 type Mutation {
+  createManyAndReturnPost(data: [PostCreateManyInput!]!, skipDuplicates: Boolean): [CreateManyAndReturnPost!]!
+  createManyAndReturnUser(data: [UserCreateManyInput!]!, skipDuplicates: Boolean): [CreateManyAndReturnUser!]!
   createManyPost(data: [PostCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyUser(data: [UserCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createOnePost(data: PostCreateInput!): Post!
@@ -795,6 +810,7 @@ exports[`generator integration should generates TypeGraphQL classes files to out
     [crud]
       [Post]
         AggregatePostResolver.ts
+        CreateManyAndReturnPostResolver.ts
         CreateManyPostResolver.ts
         CreateOnePostResolver.ts
         DeleteManyPostResolver.ts
@@ -811,6 +827,7 @@ exports[`generator integration should generates TypeGraphQL classes files to out
         UpsertOnePostResolver.ts
         [args]
           AggregatePostArgs.ts
+          CreateManyAndReturnPostArgs.ts
           CreateManyPostArgs.ts
           CreateOnePostArgs.ts
           DeleteManyPostArgs.ts
@@ -827,6 +844,7 @@ exports[`generator integration should generates TypeGraphQL classes files to out
           index.ts
       [User]
         AggregateUserResolver.ts
+        CreateManyAndReturnUserResolver.ts
         CreateManyUserResolver.ts
         CreateOneUserResolver.ts
         DeleteManyUserResolver.ts
@@ -843,6 +861,7 @@ exports[`generator integration should generates TypeGraphQL classes files to out
         UserCrudResolver.ts
         [args]
           AggregateUserArgs.ts
+          CreateManyAndReturnUserArgs.ts
           CreateManyUserArgs.ts
           CreateOneUserArgs.ts
           DeleteManyUserArgs.ts
@@ -939,6 +958,8 @@ exports[`generator integration should generates TypeGraphQL classes files to out
       AffectedRowsOutput.ts
       AggregatePost.ts
       AggregateUser.ts
+      CreateManyAndReturnPost.ts
+      CreateManyAndReturnUser.ts
       PostAvgAggregate.ts
       PostCountAggregate.ts
       PostGroupBy.ts

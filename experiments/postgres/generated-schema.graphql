@@ -204,7 +204,7 @@ input CategoryOrderByWithAggregationInput {
   slug: SortOrder
 }
 
-input CategoryOrderByWithRelationAndSearchRelevanceInput {
+input CategoryOrderByWithRelationInput {
   _relevance: CategoryOrderByRelevanceInput
   name: SortOrder
   number: SortOrder
@@ -253,12 +253,66 @@ input CategoryWhereUniqueInput {
   slug: StringFilter
 }
 
+type CreateManyAndReturnCreator {
+  id: Int!
+  name: String!
+}
+
+type CreateManyAndReturnDirector {
+  firstName: String!
+  lastName: String!
+}
+
+type CreateManyAndReturnHidden {
+  id: String!
+  name: String
+}
+
+type CreateManyAndReturnMainUser {
+  age: Int!
+  aliases: [String!]
+  amount: Float!
+  balance: Float!
+  email: String!
+  grades: [Int!]
+  id: Int!
+  name: String
+  role: Role!
+}
+
+type CreateManyAndReturnMovie {
+  director: Director!
+  directorFirstName: String!
+  directorLastName: String!
+  title: String!
+}
+
+type CreateManyAndReturnNativeTypeModel {
+  bigInt: BigInt
+  byteA: Byte
+  decimal: Decimal
+  id: Int!
+}
+
+type CreateManyAndReturnPatient {
+  email: String!
+  firstName: String!
+  lastName: String!
+}
+
+type CreateManyAndReturnProblem {
+  creator(where: CreatorWhereInput): Creator
+  creatorId: Int
+  id: Int!
+  problemText: String!
+}
+
 type Creator {
   _count: CreatorCount
   id: ID!
-  likes(cursor: ProblemWhereUniqueInput, distinct: [ProblemScalarFieldEnum!], orderBy: [ProblemOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: ProblemWhereInput): [Problem!]!
+  likes(cursor: ProblemWhereUniqueInput, distinct: [ProblemScalarFieldEnum!], orderBy: [ProblemOrderByWithRelationInput!], skip: Int, take: Int, where: ProblemWhereInput): [Problem!]!
   name: String!
-  problems(cursor: ProblemWhereUniqueInput, distinct: [ProblemScalarFieldEnum!], orderBy: [ProblemOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: ProblemWhereInput): [Problem!]!
+  problems(cursor: ProblemWhereUniqueInput, distinct: [ProblemScalarFieldEnum!], orderBy: [ProblemOrderByWithRelationInput!], skip: Int, take: Int, where: ProblemWhereInput): [Problem!]!
 }
 
 type CreatorAvgAggregate {
@@ -393,7 +447,7 @@ input CreatorOrderByWithAggregationInput {
   name: SortOrder
 }
 
-input CreatorOrderByWithRelationAndSearchRelevanceInput {
+input CreatorOrderByWithRelationInput {
   _relevance: CreatorOrderByRelevanceInput
   id: SortOrder
   likes: ProblemOrderByRelationAggregateInput
@@ -520,34 +574,34 @@ input CreatorWhereUniqueInput {
   problems: ProblemListRelationFilter
 }
 
-"""
-The javascript `Date` as string. Type represents date and time as the ISO Date string.
-"""
-scalar DateTime
-
 input DateTimeFilter {
-  equals: DateTime
-  gt: DateTime
-  gte: DateTime
-  in: [DateTime!]
-  lt: DateTime
-  lte: DateTime
+  equals: DateTimeISO
+  gt: DateTimeISO
+  gte: DateTimeISO
+  in: [DateTimeISO!]
+  lt: DateTimeISO
+  lte: DateTimeISO
   not: NestedDateTimeFilter
-  notIn: [DateTime!]
+  notIn: [DateTimeISO!]
 }
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.This scalar is serialized to a string in ISO 8601 format and parsed from a string in ISO 8601 format.
+"""
+scalar DateTimeISO
 
 input DateTimeWithAggregatesFilter {
   _count: NestedIntFilter
   _max: NestedDateTimeFilter
   _min: NestedDateTimeFilter
-  equals: DateTime
-  gt: DateTime
-  gte: DateTime
-  in: [DateTime!]
-  lt: DateTime
-  lte: DateTime
+  equals: DateTimeISO
+  gt: DateTimeISO
+  gte: DateTimeISO
+  in: [DateTimeISO!]
+  lt: DateTimeISO
+  lte: DateTimeISO
   not: NestedDateTimeWithAggregatesFilter
-  notIn: [DateTime!]
+  notIn: [DateTimeISO!]
 }
 
 """
@@ -586,7 +640,7 @@ type Director {
   _count: DirectorCount
   firstName: String!
   lastName: String!
-  movies(cursor: MovieWhereUniqueInput, distinct: [MovieScalarFieldEnum!], orderBy: [MovieOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: MovieWhereInput): [Movie!]!
+  movies(cursor: MovieWhereUniqueInput, distinct: [MovieScalarFieldEnum!], orderBy: [MovieOrderByWithRelationInput!], skip: Int, take: Int, where: MovieWhereInput): [Movie!]!
 }
 
 type DirectorCount {
@@ -683,7 +737,7 @@ input DirectorOrderByWithAggregationInput {
   lastName: SortOrder
 }
 
-input DirectorOrderByWithRelationAndSearchRelevanceInput {
+input DirectorOrderByWithRelationInput {
   _relevance: DirectorOrderByRelevanceInput
   firstName: SortOrder
   lastName: SortOrder
@@ -897,7 +951,7 @@ input HiddenOrderByWithAggregationInput {
   name: SortOrderInput
 }
 
-input HiddenOrderByWithRelationAndSearchRelevanceInput {
+input HiddenOrderByWithRelationInput {
   _relevance: HiddenOrderByRelevanceInput
   id: SortOrder
   name: SortOrderInput
@@ -1051,7 +1105,7 @@ type MainUser {
   age: Int!
   aliases: [String!]!
   amount: Float!
-  clientPosts(cursor: PostWhereUniqueInput, distinct: [PostScalarFieldEnum!], orderBy: [PostOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: PostWhereInput): [Post!]!
+  clientPosts(cursor: PostWhereUniqueInput, distinct: [PostScalarFieldEnum!], orderBy: [PostOrderByWithRelationInput!], skip: Int, take: Int, where: PostWhereInput): [Post!]!
   email: String!
 
   """renamed field doc"""
@@ -1267,7 +1321,7 @@ input MainUserOrderByWithAggregationInput {
   role: SortOrder
 }
 
-input MainUserOrderByWithRelationAndSearchRelevanceInput {
+input MainUserOrderByWithRelationInput {
   _relevance: MainUserOrderByRelevanceInput
   accountBalance: SortOrder
   age: SortOrder
@@ -1578,9 +1632,9 @@ input MovieOrderByWithAggregationInput {
   title: SortOrder
 }
 
-input MovieOrderByWithRelationAndSearchRelevanceInput {
+input MovieOrderByWithRelationInput {
   _relevance: MovieOrderByRelevanceInput
-  director: DirectorOrderByWithRelationAndSearchRelevanceInput
+  director: DirectorOrderByWithRelationInput
   directorFirstName: SortOrder
   directorLastName: SortOrder
   title: SortOrder
@@ -1675,6 +1729,14 @@ input MovieWhereUniqueInput {
 }
 
 type Mutation {
+  createManyAndReturnCreator(data: [CreatorCreateManyInput!]!, skipDuplicates: Boolean): [CreateManyAndReturnCreator!]!
+  createManyAndReturnDirector(data: [DirectorCreateManyInput!]!, skipDuplicates: Boolean): [CreateManyAndReturnDirector!]!
+  createManyAndReturnHidden(data: [HiddenCreateManyInput!]!, skipDuplicates: Boolean): [CreateManyAndReturnHidden!]!
+  createManyAndReturnMainUser(data: [MainUserCreateManyInput!]!, skipDuplicates: Boolean): [CreateManyAndReturnMainUser!]!
+  createManyAndReturnMovie(data: [MovieCreateManyInput!]!, skipDuplicates: Boolean): [CreateManyAndReturnMovie!]!
+  createManyAndReturnNativeTypeModel(data: [NativeTypeModelCreateManyInput!]!, skipDuplicates: Boolean): [CreateManyAndReturnNativeTypeModel!]!
+  createManyAndReturnPatient(data: [PatientCreateManyInput!]!, skipDuplicates: Boolean): [CreateManyAndReturnPatient!]!
+  createManyAndReturnProblem(data: [ProblemCreateManyInput!]!, skipDuplicates: Boolean): [CreateManyAndReturnProblem!]!
   createManyCreator(data: [CreatorCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyDirector(data: [DirectorCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyHidden(data: [HiddenCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
@@ -1835,7 +1897,7 @@ input NativeTypeModelOrderByWithAggregationInput {
   id: SortOrder
 }
 
-input NativeTypeModelOrderByWithRelationAndSearchRelevanceInput {
+input NativeTypeModelOrderByWithRelationInput {
   bigInt: SortOrderInput
   byteA: SortOrderInput
   decimal: SortOrderInput
@@ -1948,28 +2010,28 @@ input NestedBytesNullableWithAggregatesFilter {
 }
 
 input NestedDateTimeFilter {
-  equals: DateTime
-  gt: DateTime
-  gte: DateTime
-  in: [DateTime!]
-  lt: DateTime
-  lte: DateTime
+  equals: DateTimeISO
+  gt: DateTimeISO
+  gte: DateTimeISO
+  in: [DateTimeISO!]
+  lt: DateTimeISO
+  lte: DateTimeISO
   not: NestedDateTimeFilter
-  notIn: [DateTime!]
+  notIn: [DateTimeISO!]
 }
 
 input NestedDateTimeWithAggregatesFilter {
   _count: NestedIntFilter
   _max: NestedDateTimeFilter
   _min: NestedDateTimeFilter
-  equals: DateTime
-  gt: DateTime
-  gte: DateTime
-  in: [DateTime!]
-  lt: DateTime
-  lte: DateTime
+  equals: DateTimeISO
+  gt: DateTimeISO
+  gte: DateTimeISO
+  in: [DateTimeISO!]
+  lt: DateTimeISO
+  lte: DateTimeISO
   not: NestedDateTimeWithAggregatesFilter
-  notIn: [DateTime!]
+  notIn: [DateTimeISO!]
 }
 
 input NestedDecimalNullableFilter {
@@ -2302,7 +2364,7 @@ input PatientOrderByWithAggregationInput {
   lastName: SortOrder
 }
 
-input PatientOrderByWithRelationAndSearchRelevanceInput {
+input PatientOrderByWithRelationInput {
   _relevance: PatientOrderByRelevanceInput
   email: SortOrder
   firstName: SortOrder
@@ -2359,12 +2421,12 @@ type Post {
   author: MainUser!
   authorId: Int!
   content: String
-  createdAt: DateTime!
+  createdAt: DateTimeISO!
+  isPublished: Boolean!
   kind: PostKind
   metadata: JSON!
-  published: Boolean!
   title: String!
-  updatedAt: DateTime!
+  updatedAt: DateTimeISO!
 
   """
   first line of comment
@@ -2415,7 +2477,7 @@ input PostCountOrderByAggregateInput {
 input PostCreateInput {
   author: MainUserCreateNestedOneWithoutPostsInput!
   content: String
-  createdAt: DateTime
+  createdAt: DateTimeISO
   editor: MainUserCreateNestedOneWithoutEditorPostsInput
   kind: PostKind
   metadata: JSON!
@@ -2426,7 +2488,7 @@ input PostCreateInput {
 
 input PostCreateManyAuthorInput {
   content: String
-  createdAt: DateTime
+  createdAt: DateTimeISO
   editorId: Int
   kind: PostKind
   metadata: JSON!
@@ -2443,7 +2505,7 @@ input PostCreateManyAuthorInputEnvelope {
 input PostCreateManyEditorInput {
   authorId: Int!
   content: String
-  createdAt: DateTime
+  createdAt: DateTimeISO
   kind: PostKind
   metadata: JSON!
   subtitle: String!
@@ -2482,7 +2544,7 @@ input PostCreateOrConnectWithoutEditorInput {
 
 input PostCreateWithoutAuthorInput {
   content: String
-  createdAt: DateTime
+  createdAt: DateTimeISO
   editor: MainUserCreateNestedOneWithoutEditorPostsInput
   kind: PostKind
   metadata: JSON!
@@ -2494,7 +2556,7 @@ input PostCreateWithoutAuthorInput {
 input PostCreateWithoutEditorInput {
   author: MainUserCreateNestedOneWithoutPostsInput!
   content: String
-  createdAt: DateTime
+  createdAt: DateTimeISO
   kind: PostKind
   metadata: JSON!
   subtitle: String!
@@ -2510,14 +2572,14 @@ type PostGroupBy {
   _sum: PostSumAggregate
   authorId: Int!
   content: String
-  createdAt: DateTime!
+  createdAt: DateTimeISO!
   editorId: Int
   kind: PostKind
   metadata: JSON!
   published: Boolean!
   subtitle: String!
   title: String!
-  updatedAt: DateTime!
+  updatedAt: DateTimeISO!
   uuid: String!
 }
 
@@ -2535,13 +2597,13 @@ input PostListRelationFilter {
 type PostMaxAggregate {
   authorId: Int
   content: String
-  createdAt: DateTime
+  createdAt: DateTimeISO
   editorId: Int
   kind: PostKind
   published: Boolean
   subtitle: String
   title: String
-  updatedAt: DateTime
+  updatedAt: DateTimeISO
   uuid: String
 }
 
@@ -2560,13 +2622,13 @@ input PostMaxOrderByAggregateInput {
 type PostMinAggregate {
   authorId: Int
   content: String
-  createdAt: DateTime
+  createdAt: DateTimeISO
   editorId: Int
   kind: PostKind
   published: Boolean
   subtitle: String
   title: String
-  updatedAt: DateTime
+  updatedAt: DateTimeISO
   uuid: String
 }
 
@@ -2617,13 +2679,13 @@ input PostOrderByWithAggregationInput {
   uuid: SortOrder
 }
 
-input PostOrderByWithRelationAndSearchRelevanceInput {
+input PostOrderByWithRelationInput {
   _relevance: PostOrderByRelevanceInput
-  author: MainUserOrderByWithRelationAndSearchRelevanceInput
+  author: MainUserOrderByWithRelationInput
   authorId: SortOrder
   content: SortOrderInput
   createdAt: SortOrder
-  editor: MainUserOrderByWithRelationAndSearchRelevanceInput
+  editor: MainUserOrderByWithRelationInput
   editorId: SortOrderInput
   kind: SortOrderInput
   metadata: SortOrder
@@ -2691,7 +2753,7 @@ input PostSumOrderByAggregateInput {
 
 input PostUpdateManyMutationInput {
   content: String
-  createdAt: DateTime
+  createdAt: DateTimeISO
   kind: PostKind
   metadata: JSON
   subtitle: String
@@ -2749,7 +2811,7 @@ input PostUpdateWithWhereUniqueWithoutEditorInput {
 
 input PostUpdateWithoutAuthorInput {
   content: String
-  createdAt: DateTime
+  createdAt: DateTimeISO
   editor: MainUserUpdateOneWithoutEditorPostsNestedInput
   kind: PostKind
   metadata: JSON
@@ -2761,7 +2823,7 @@ input PostUpdateWithoutAuthorInput {
 input PostUpdateWithoutEditorInput {
   author: MainUserUpdateOneRequiredWithoutPostsNestedInput
   content: String
-  createdAt: DateTime
+  createdAt: DateTimeISO
   kind: PostKind
   metadata: JSON
   subtitle: String
@@ -2822,7 +2884,7 @@ type Problem {
   creator(where: CreatorWhereInput): Creator
   creatorId: Int
   id: ID!
-  likedBy(cursor: CreatorWhereUniqueInput, distinct: [CreatorScalarFieldEnum!], orderBy: [CreatorOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: CreatorWhereInput): [Creator!]!
+  likedBy(cursor: CreatorWhereUniqueInput, distinct: [CreatorScalarFieldEnum!], orderBy: [CreatorOrderByWithRelationInput!], skip: Int, take: Int, where: CreatorWhereInput): [Creator!]!
   problemText: String!
 }
 
@@ -2974,9 +3036,9 @@ input ProblemOrderByWithAggregationInput {
   problemText: SortOrder
 }
 
-input ProblemOrderByWithRelationAndSearchRelevanceInput {
+input ProblemOrderByWithRelationInput {
   _relevance: ProblemOrderByRelevanceInput
-  creator: CreatorOrderByWithRelationAndSearchRelevanceInput
+  creator: CreatorOrderByWithRelationInput
   creatorId: SortOrderInput
   id: SortOrder
   likedBy: CreatorOrderByRelationAggregateInput
@@ -3119,38 +3181,38 @@ input ProblemWhereUniqueInput {
 }
 
 type Query {
-  aggregateCreator(cursor: CreatorWhereUniqueInput, orderBy: [CreatorOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: CreatorWhereInput): AggregateCreator!
-  aggregateDirector(cursor: DirectorWhereUniqueInput, orderBy: [DirectorOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: DirectorWhereInput): AggregateDirector!
-  aggregateHidden(cursor: HiddenWhereUniqueInput, orderBy: [HiddenOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: HiddenWhereInput): AggregateHidden!
-  aggregateMainUser(cursor: MainUserWhereUniqueInput, orderBy: [MainUserOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: MainUserWhereInput): AggregateMainUser!
-  aggregateMovie(cursor: MovieWhereUniqueInput, orderBy: [MovieOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: MovieWhereInput): AggregateMovie!
-  aggregateNativeTypeModel(cursor: NativeTypeModelWhereUniqueInput, orderBy: [NativeTypeModelOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: NativeTypeModelWhereInput): AggregateNativeTypeModel!
-  aggregatePatient(cursor: PatientWhereUniqueInput, orderBy: [PatientOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: PatientWhereInput): AggregatePatient!
-  aggregateProblem(cursor: ProblemWhereUniqueInput, orderBy: [ProblemOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: ProblemWhereInput): AggregateProblem!
+  aggregateCreator(cursor: CreatorWhereUniqueInput, orderBy: [CreatorOrderByWithRelationInput!], skip: Int, take: Int, where: CreatorWhereInput): AggregateCreator!
+  aggregateDirector(cursor: DirectorWhereUniqueInput, orderBy: [DirectorOrderByWithRelationInput!], skip: Int, take: Int, where: DirectorWhereInput): AggregateDirector!
+  aggregateHidden(cursor: HiddenWhereUniqueInput, orderBy: [HiddenOrderByWithRelationInput!], skip: Int, take: Int, where: HiddenWhereInput): AggregateHidden!
+  aggregateMainUser(cursor: MainUserWhereUniqueInput, orderBy: [MainUserOrderByWithRelationInput!], skip: Int, take: Int, where: MainUserWhereInput): AggregateMainUser!
+  aggregateMovie(cursor: MovieWhereUniqueInput, orderBy: [MovieOrderByWithRelationInput!], skip: Int, take: Int, where: MovieWhereInput): AggregateMovie!
+  aggregateNativeTypeModel(cursor: NativeTypeModelWhereUniqueInput, orderBy: [NativeTypeModelOrderByWithRelationInput!], skip: Int, take: Int, where: NativeTypeModelWhereInput): AggregateNativeTypeModel!
+  aggregatePatient(cursor: PatientWhereUniqueInput, orderBy: [PatientOrderByWithRelationInput!], skip: Int, take: Int, where: PatientWhereInput): AggregatePatient!
+  aggregateProblem(cursor: ProblemWhereUniqueInput, orderBy: [ProblemOrderByWithRelationInput!], skip: Int, take: Int, where: ProblemWhereInput): AggregateProblem!
   allMainUsers: [MainUser!]!
   allPosts: [Post!]!
-  categories(cursor: CategoryWhereUniqueInput, distinct: [CategoryScalarFieldEnum!], orderBy: [CategoryOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: CategoryWhereInput): [Category!]!
+  categories(cursor: CategoryWhereUniqueInput, distinct: [CategoryScalarFieldEnum!], orderBy: [CategoryOrderByWithRelationInput!], skip: Int, take: Int, where: CategoryWhereInput): [Category!]!
   creator(where: CreatorWhereUniqueInput!): Creator
-  creators(cursor: CreatorWhereUniqueInput, distinct: [CreatorScalarFieldEnum!], orderBy: [CreatorOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: CreatorWhereInput): [Creator!]!
-  customFindMainUsersWithArgs(cursor: MainUserWhereUniqueInput, distinct: [MainUserScalarFieldEnum!], orderBy: [MainUserOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: MainUserWhereInput): [MainUser!]!
+  creators(cursor: CreatorWhereUniqueInput, distinct: [CreatorScalarFieldEnum!], orderBy: [CreatorOrderByWithRelationInput!], skip: Int, take: Int, where: CreatorWhereInput): [Creator!]!
+  customFindMainUsersWithArgs(cursor: MainUserWhereUniqueInput, distinct: [MainUserScalarFieldEnum!], orderBy: [MainUserOrderByWithRelationInput!], skip: Int, take: Int, where: MainUserWhereInput): [MainUser!]!
   director(where: DirectorWhereUniqueInput!): Director
-  directors(cursor: DirectorWhereUniqueInput, distinct: [DirectorScalarFieldEnum!], orderBy: [DirectorOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: DirectorWhereInput): [Director!]!
-  findFirstCreator(cursor: CreatorWhereUniqueInput, distinct: [CreatorScalarFieldEnum!], orderBy: [CreatorOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: CreatorWhereInput): Creator
-  findFirstCreatorOrThrow(cursor: CreatorWhereUniqueInput, distinct: [CreatorScalarFieldEnum!], orderBy: [CreatorOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: CreatorWhereInput): Creator
-  findFirstDirector(cursor: DirectorWhereUniqueInput, distinct: [DirectorScalarFieldEnum!], orderBy: [DirectorOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: DirectorWhereInput): Director
-  findFirstDirectorOrThrow(cursor: DirectorWhereUniqueInput, distinct: [DirectorScalarFieldEnum!], orderBy: [DirectorOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: DirectorWhereInput): Director
-  findFirstHidden(cursor: HiddenWhereUniqueInput, distinct: [HiddenScalarFieldEnum!], orderBy: [HiddenOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: HiddenWhereInput): Hidden
-  findFirstHiddenOrThrow(cursor: HiddenWhereUniqueInput, distinct: [HiddenScalarFieldEnum!], orderBy: [HiddenOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: HiddenWhereInput): Hidden
-  findFirstMainUser(cursor: MainUserWhereUniqueInput, distinct: [MainUserScalarFieldEnum!], orderBy: [MainUserOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: MainUserWhereInput): MainUser
-  findFirstMainUserOrThrow(cursor: MainUserWhereUniqueInput, distinct: [MainUserScalarFieldEnum!], orderBy: [MainUserOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: MainUserWhereInput): MainUser
-  findFirstMovie(cursor: MovieWhereUniqueInput, distinct: [MovieScalarFieldEnum!], orderBy: [MovieOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: MovieWhereInput): Movie
-  findFirstMovieOrThrow(cursor: MovieWhereUniqueInput, distinct: [MovieScalarFieldEnum!], orderBy: [MovieOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: MovieWhereInput): Movie
-  findFirstNativeTypeModel(cursor: NativeTypeModelWhereUniqueInput, distinct: [NativeTypeModelScalarFieldEnum!], orderBy: [NativeTypeModelOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: NativeTypeModelWhereInput): NativeTypeModel
-  findFirstNativeTypeModelOrThrow(cursor: NativeTypeModelWhereUniqueInput, distinct: [NativeTypeModelScalarFieldEnum!], orderBy: [NativeTypeModelOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: NativeTypeModelWhereInput): NativeTypeModel
-  findFirstPatient(cursor: PatientWhereUniqueInput, distinct: [PatientScalarFieldEnum!], orderBy: [PatientOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: PatientWhereInput): Patient
-  findFirstPatientOrThrow(cursor: PatientWhereUniqueInput, distinct: [PatientScalarFieldEnum!], orderBy: [PatientOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: PatientWhereInput): Patient
-  findFirstProblem(cursor: ProblemWhereUniqueInput, distinct: [ProblemScalarFieldEnum!], orderBy: [ProblemOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: ProblemWhereInput): Problem
-  findFirstProblemOrThrow(cursor: ProblemWhereUniqueInput, distinct: [ProblemScalarFieldEnum!], orderBy: [ProblemOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: ProblemWhereInput): Problem
+  directors(cursor: DirectorWhereUniqueInput, distinct: [DirectorScalarFieldEnum!], orderBy: [DirectorOrderByWithRelationInput!], skip: Int, take: Int, where: DirectorWhereInput): [Director!]!
+  findFirstCreator(cursor: CreatorWhereUniqueInput, distinct: [CreatorScalarFieldEnum!], orderBy: [CreatorOrderByWithRelationInput!], skip: Int, take: Int, where: CreatorWhereInput): Creator
+  findFirstCreatorOrThrow(cursor: CreatorWhereUniqueInput, distinct: [CreatorScalarFieldEnum!], orderBy: [CreatorOrderByWithRelationInput!], skip: Int, take: Int, where: CreatorWhereInput): Creator
+  findFirstDirector(cursor: DirectorWhereUniqueInput, distinct: [DirectorScalarFieldEnum!], orderBy: [DirectorOrderByWithRelationInput!], skip: Int, take: Int, where: DirectorWhereInput): Director
+  findFirstDirectorOrThrow(cursor: DirectorWhereUniqueInput, distinct: [DirectorScalarFieldEnum!], orderBy: [DirectorOrderByWithRelationInput!], skip: Int, take: Int, where: DirectorWhereInput): Director
+  findFirstHidden(cursor: HiddenWhereUniqueInput, distinct: [HiddenScalarFieldEnum!], orderBy: [HiddenOrderByWithRelationInput!], skip: Int, take: Int, where: HiddenWhereInput): Hidden
+  findFirstHiddenOrThrow(cursor: HiddenWhereUniqueInput, distinct: [HiddenScalarFieldEnum!], orderBy: [HiddenOrderByWithRelationInput!], skip: Int, take: Int, where: HiddenWhereInput): Hidden
+  findFirstMainUser(cursor: MainUserWhereUniqueInput, distinct: [MainUserScalarFieldEnum!], orderBy: [MainUserOrderByWithRelationInput!], skip: Int, take: Int, where: MainUserWhereInput): MainUser
+  findFirstMainUserOrThrow(cursor: MainUserWhereUniqueInput, distinct: [MainUserScalarFieldEnum!], orderBy: [MainUserOrderByWithRelationInput!], skip: Int, take: Int, where: MainUserWhereInput): MainUser
+  findFirstMovie(cursor: MovieWhereUniqueInput, distinct: [MovieScalarFieldEnum!], orderBy: [MovieOrderByWithRelationInput!], skip: Int, take: Int, where: MovieWhereInput): Movie
+  findFirstMovieOrThrow(cursor: MovieWhereUniqueInput, distinct: [MovieScalarFieldEnum!], orderBy: [MovieOrderByWithRelationInput!], skip: Int, take: Int, where: MovieWhereInput): Movie
+  findFirstNativeTypeModel(cursor: NativeTypeModelWhereUniqueInput, distinct: [NativeTypeModelScalarFieldEnum!], orderBy: [NativeTypeModelOrderByWithRelationInput!], skip: Int, take: Int, where: NativeTypeModelWhereInput): NativeTypeModel
+  findFirstNativeTypeModelOrThrow(cursor: NativeTypeModelWhereUniqueInput, distinct: [NativeTypeModelScalarFieldEnum!], orderBy: [NativeTypeModelOrderByWithRelationInput!], skip: Int, take: Int, where: NativeTypeModelWhereInput): NativeTypeModel
+  findFirstPatient(cursor: PatientWhereUniqueInput, distinct: [PatientScalarFieldEnum!], orderBy: [PatientOrderByWithRelationInput!], skip: Int, take: Int, where: PatientWhereInput): Patient
+  findFirstPatientOrThrow(cursor: PatientWhereUniqueInput, distinct: [PatientScalarFieldEnum!], orderBy: [PatientOrderByWithRelationInput!], skip: Int, take: Int, where: PatientWhereInput): Patient
+  findFirstProblem(cursor: ProblemWhereUniqueInput, distinct: [ProblemScalarFieldEnum!], orderBy: [ProblemOrderByWithRelationInput!], skip: Int, take: Int, where: ProblemWhereInput): Problem
+  findFirstProblemOrThrow(cursor: ProblemWhereUniqueInput, distinct: [ProblemScalarFieldEnum!], orderBy: [ProblemOrderByWithRelationInput!], skip: Int, take: Int, where: ProblemWhereInput): Problem
   getCreator(where: CreatorWhereUniqueInput!): Creator
   getDirector(where: DirectorWhereUniqueInput!): Director
   getHidden(where: HiddenWhereUniqueInput!): Hidden
@@ -3170,19 +3232,19 @@ type Query {
   groupByPost(by: [PostScalarFieldEnum!]!, having: PostScalarWhereWithAggregatesInput, orderBy: [PostOrderByWithAggregationInput!], skip: Int, take: Int, where: PostWhereInput): [PostGroupBy!]!
   groupByProblem(by: [ProblemScalarFieldEnum!]!, having: ProblemScalarWhereWithAggregatesInput, orderBy: [ProblemOrderByWithAggregationInput!], skip: Int, take: Int, where: ProblemWhereInput): [ProblemGroupBy!]!
   hidden(where: HiddenWhereUniqueInput!): Hidden
-  hiddens(cursor: HiddenWhereUniqueInput, distinct: [HiddenScalarFieldEnum!], orderBy: [HiddenOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: HiddenWhereInput): [Hidden!]!
+  hiddens(cursor: HiddenWhereUniqueInput, distinct: [HiddenScalarFieldEnum!], orderBy: [HiddenOrderByWithRelationInput!], skip: Int, take: Int, where: HiddenWhereInput): [Hidden!]!
   mainUser(where: MainUserWhereUniqueInput!): MainUser
-  mainUsers(cursor: MainUserWhereUniqueInput, distinct: [MainUserScalarFieldEnum!], orderBy: [MainUserOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: MainUserWhereInput): [MainUser!]!
+  mainUsers(cursor: MainUserWhereUniqueInput, distinct: [MainUserScalarFieldEnum!], orderBy: [MainUserOrderByWithRelationInput!], skip: Int, take: Int, where: MainUserWhereInput): [MainUser!]!
   movie(where: MovieWhereUniqueInput!): Movie
-  movies(cursor: MovieWhereUniqueInput, distinct: [MovieScalarFieldEnum!], orderBy: [MovieOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: MovieWhereInput): [Movie!]!
+  movies(cursor: MovieWhereUniqueInput, distinct: [MovieScalarFieldEnum!], orderBy: [MovieOrderByWithRelationInput!], skip: Int, take: Int, where: MovieWhereInput): [Movie!]!
   nativeTypeModel(where: NativeTypeModelWhereUniqueInput!): NativeTypeModel
-  nativeTypeModels(cursor: NativeTypeModelWhereUniqueInput, distinct: [NativeTypeModelScalarFieldEnum!], orderBy: [NativeTypeModelOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: NativeTypeModelWhereInput): [NativeTypeModel!]!
+  nativeTypeModels(cursor: NativeTypeModelWhereUniqueInput, distinct: [NativeTypeModelScalarFieldEnum!], orderBy: [NativeTypeModelOrderByWithRelationInput!], skip: Int, take: Int, where: NativeTypeModelWhereInput): [NativeTypeModel!]!
   patient(where: PatientWhereUniqueInput!): Patient
-  patients(cursor: PatientWhereUniqueInput, distinct: [PatientScalarFieldEnum!], orderBy: [PatientOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: PatientWhereInput): [Patient!]!
+  patients(cursor: PatientWhereUniqueInput, distinct: [PatientScalarFieldEnum!], orderBy: [PatientOrderByWithRelationInput!], skip: Int, take: Int, where: PatientWhereInput): [Patient!]!
   post(where: PostWhereUniqueInput!): Post
-  posts(cursor: PostWhereUniqueInput, distinct: [PostScalarFieldEnum!], orderBy: [PostOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: PostWhereInput): [Post!]!
+  posts(cursor: PostWhereUniqueInput, distinct: [PostScalarFieldEnum!], orderBy: [PostOrderByWithRelationInput!], skip: Int, take: Int, where: PostWhereInput): [Post!]!
   problem(where: ProblemWhereUniqueInput!): Problem
-  problems(cursor: ProblemWhereUniqueInput, distinct: [ProblemScalarFieldEnum!], orderBy: [ProblemOrderByWithRelationAndSearchRelevanceInput!], skip: Int, take: Int, where: ProblemWhereInput): [Problem!]!
+  problems(cursor: ProblemWhereUniqueInput, distinct: [ProblemScalarFieldEnum!], orderBy: [ProblemOrderByWithRelationInput!], skip: Int, take: Int, where: ProblemWhereInput): [Problem!]!
 }
 
 enum QueryMode {

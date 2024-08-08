@@ -53,11 +53,12 @@ import { DMMF } from "./dmmf/types";
 import { getBlocksToEmit } from "./emit-block";
 
 const baseCompilerOptions: CompilerOptions = {
-  target: ScriptTarget.ES2019,
+  target: ScriptTarget.ES2021,
   module: ModuleKind.CommonJS,
   emitDecoratorMetadata: true,
   experimentalDecorators: true,
   esModuleInterop: true,
+  skipLibCheck: true,
 };
 
 export default async function generateCode(

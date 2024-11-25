@@ -39,6 +39,7 @@ export default function generateCrudResolverClassFromMapping(
   generateArgsImports(
     sourceFile,
     mapping.actions
+      .filter(a => !generatorOptions.emitActions?.includes(a.prismaMethod))
       .filter(it => it.argsTypeName !== undefined)
       .map(it => it.argsTypeName!),
     0,
@@ -46,7 +47,11 @@ export default function generateCrudResolverClassFromMapping(
   generateHelpersFileImport(sourceFile, 3);
 
   const distinctOutputTypesNames = [
-    ...new Set(mapping.actions.map(it => it.outputTypeName)),
+    ...new Set(
+      mapping.actions
+        .filter(a => !generatorOptions.emitActions?.includes(a.prismaMethod))
+        .map(it => it.outputTypeName),
+    ),
   ];
   const modelOutputTypeNames = distinctOutputTypesNames.filter(typeName =>
     dmmfDocument.isModelTypeName(typeName),
@@ -66,14 +71,10 @@ export default function generateCrudResolverClassFromMapping(
         arguments: [`_of => ${model.typeName}`],
       },
     ],
-    methods: mapping.actions.filter(a=>!generatorOptions.emitActions?.includes(a.prismaMethod)).map<OptionalKind<MethodDeclarationStructure>>(
-      action =>
-        generateCrudResolverClassMethodDeclaration(
-          action,
-          mapping,
-          dmmfDocument,
-          generatorOptions,
-        ),
-    ),
+    methods: mapping.actions
+      .filter(a => !generatorOptions.emitActions?.includes(a.prismaMethod))
+      .map<
+        OptionalKind<MethodDeclarationStructure>
+      >(action => generateCrudResolverClassMethodDeclaration(action, mapping, dmmfDocument, generatorOptions)),
   });
 }

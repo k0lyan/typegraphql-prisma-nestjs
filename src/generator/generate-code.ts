@@ -77,7 +77,7 @@ export default async function generateCode(
     ),
     absolutePrismaOutputPath:
       !baseOptions.customPrismaImportPath &&
-        baseOptions.prismaClientPath.includes("node_modules")
+      baseOptions.prismaClientPath.includes("node_modules")
         ? "@prisma/client"
         : undefined,
     formatGeneratedCode: baseOptions.formatGeneratedCode ?? "tsc", // default for backward compatibility
@@ -364,20 +364,22 @@ export default async function generateCode(
         dmmfDocument,
         options,
       );
-      mapping.actions.filter(a=>!options.emitActions?.includes(a.prismaMethod)).forEach(async action => {
-        const model = dmmfDocument.datamodel.models.find(
-          model => model.name === mapping.modelName,
-        )!;
-        generateActionResolverClass(
-          project,
-          baseDirPath,
-          model,
-          action,
-          mapping,
-          dmmfDocument,
-          options,
-        );
-      });
+      mapping.actions
+        .filter(a => !options.emitActions?.includes(a.prismaMethod))
+        .forEach(async action => {
+          const model = dmmfDocument.datamodel.models.find(
+            model => model.name === mapping.modelName,
+          )!;
+          generateActionResolverClass(
+            project,
+            baseDirPath,
+            model,
+            action,
+            mapping,
+            dmmfDocument,
+            options,
+          );
+        });
     });
     const generateMappingData =
       dmmfDocument.modelMappings.map<GenerateMappingData>(mapping => {
@@ -387,7 +389,9 @@ export default async function generateCode(
         return {
           modelName: model.typeName,
           resolverName: mapping.resolverName,
-          actionResolverNames: mapping.actions.map(it => it.actionResolverName),
+          actionResolverNames: mapping.actions
+            .filter(a => !options.emitActions?.includes(a.prismaMethod))
+            .map(it => it.actionResolverName),
         };
       });
     const crudResolversBarrelExportSourceFile = project.createSourceFile(
@@ -432,9 +436,9 @@ export default async function generateCode(
 
     log("Generating crud resolvers args...");
     dmmfDocument.modelMappings.forEach(async mapping => {
-      const actionsWithArgs = mapping.actions.filter(
-        it => it.argsTypeName !== undefined,
-      );
+      const actionsWithArgs = mapping.actions
+        .filter(a => !options.emitActions?.includes(a.prismaMethod))
+        .filter(it => it.argsTypeName !== undefined);
 
       if (actionsWithArgs.length) {
         const model = dmmfDocument.datamodel.models.find(
@@ -480,7 +484,9 @@ export default async function generateCode(
       crudResolversArgsIndexSourceFile,
       dmmfDocument.modelMappings
         .filter(mapping =>
-          mapping.actions.some(it => it.argsTypeName !== undefined),
+          mapping.actions
+            .filter(a => !options.emitActions?.includes(a.prismaMethod))
+            .some(it => it.argsTypeName !== undefined),
         )
         .map(mapping => mapping.modelTypeName),
     );

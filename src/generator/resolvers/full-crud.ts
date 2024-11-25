@@ -1,19 +1,19 @@
-import { OptionalKind, MethodDeclarationStructure, Project } from "ts-morph";
 import path from "path";
+import { MethodDeclarationStructure, OptionalKind, Project } from "ts-morph";
 
-import { resolversFolderName, crudResolversFolderName } from "../config";
-import {
-  generateTypeGraphQLImport,
-  generateArgsImports,
-  generateModelsImports,
-  generateOutputsImports,
-  generateGraphQLInfoImport,
-  generateHelpersFileImport,
-} from "../imports";
-import { generateCrudResolverClassMethodDeclaration } from "./helpers";
+import { crudResolversFolderName, resolversFolderName } from "../config";
 import { DmmfDocument } from "../dmmf/dmmf-document";
 import { DMMF } from "../dmmf/types";
+import {
+  generateArgsImports,
+  generateGraphQLInfoImport,
+  generateHelpersFileImport,
+  generateModelsImports,
+  generateOutputsImports,
+  generateTypeGraphQLImport,
+} from "../imports";
 import { GeneratorOptions } from "../options";
+import { generateCrudResolverClassMethodDeclaration } from "./helpers";
 
 export default function generateCrudResolverClassFromMapping(
   project: Project,
@@ -66,7 +66,7 @@ export default function generateCrudResolverClassFromMapping(
         arguments: [`_of => ${model.typeName}`],
       },
     ],
-    methods: mapping.actions.map<OptionalKind<MethodDeclarationStructure>>(
+    methods: mapping.actions.filter(a=>!generatorOptions.emitActions?.includes(a.prismaMethod)).map<OptionalKind<MethodDeclarationStructure>>(
       action =>
         generateCrudResolverClassMethodDeclaration(
           action,

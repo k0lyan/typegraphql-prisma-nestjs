@@ -56,7 +56,7 @@ export async function generate(options: GeneratorOptions) {
       "customPrismaImportPath",
     ),
     customPrismaImportPathIgnoreLevels: parseStringBoolean(
-      generatorConfig.customPrismaImportPathIgnoreLevels
+      generatorConfig.customPrismaImportPathIgnoreLevels,
     ),
     contextPrismaKey: parseString(
       generatorConfig.contextPrismaKey,
@@ -89,6 +89,11 @@ export async function generate(options: GeneratorOptions) {
     enumTypePrefix: parseString(
       generatorConfig.enumTypePrefix,
       "enumTypePrefix",
+    ),
+    emitActions: parseStringArray(generatorConfig.emitActions, "emitActions"),
+    emitPropertyMethods: parseStringArray(
+      generatorConfig.emitPropertyMethods,
+      "emitPropertyMethods",
     ),
   };
   const internalConfig: InternalGeneratorOptions = {

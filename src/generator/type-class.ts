@@ -216,8 +216,9 @@ export function generateInputTypeClassFromType(
         ],
       },
     ],
-    properties: fieldsToEmit.map<OptionalKind<PropertyDeclarationStructure>>(
-      field => {
+    properties: fieldsToEmit
+      .filter(f => !options.emitPropertyMethods?.includes(f.name))
+      .map<OptionalKind<PropertyDeclarationStructure>>(field => {
         return {
           name: field.name,
           type: field.fieldTSType,
@@ -238,8 +239,7 @@ export function generateInputTypeClassFromType(
                 },
               ],
         };
-      },
-    ),
+      }),
     getAccessors: mappedFields.map<
       OptionalKind<GetAccessorDeclarationStructure>
     >(field => {

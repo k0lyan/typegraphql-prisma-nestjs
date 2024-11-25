@@ -65,6 +65,14 @@ setTransformArgsIntoPrismaArgs(async function <
 });
 ```
 
+### Add options for skip generate methods and fields resolvers
+
+```
+emitActions: 'findUnique, findUniqueOrThrow, findFirst, findFirstOrThrow, findMany, createOne, createMany, createManyAndReturn, updateOne, updateMany, deleteOne, deleteMany, upsertOne, aggregate, groupBy'
+
+emitPropertyMethods: 'create, connectOrCreate, upsert, set, disconnect, delete, connect, update, updateMany, deleteMany'
+```
+
 ## Example use NestJS + Prisma2 + Typegraphql
 
 https://github.com/EndyKaufman/typegraphql-prisma-nestjs-example

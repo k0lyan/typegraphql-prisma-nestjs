@@ -364,7 +364,7 @@ export default async function generateCode(
         dmmfDocument,
         options,
       );
-      mapping.actions.forEach(async action => {
+      mapping.actions.filter(a=>!options.emitActions?.includes(a.prismaMethod)).forEach(async action => {
         const model = dmmfDocument.datamodel.models.find(
           model => model.name === mapping.modelName,
         )!;

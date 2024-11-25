@@ -24,6 +24,8 @@ export interface ExternalGeneratorOptions {
   inputTypePrefix?: string;
   // custom prefix for Enums
   enumTypePrefix?: string;
+  emitActions?: string[];
+  emitPropertyMethods?: string[];
 }
 
 export interface InternalGeneratorOptions {

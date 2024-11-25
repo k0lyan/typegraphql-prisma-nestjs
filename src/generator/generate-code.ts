@@ -506,6 +506,7 @@ export default async function generateCode(
     dmmfDocument.datamodel.models,
     dmmfDocument.schema.inputTypes,
     outputTypesToGenerate,
+    dmmfDocument.options,
   );
 
   log("Generate custom scalars");

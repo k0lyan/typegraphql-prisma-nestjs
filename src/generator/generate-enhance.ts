@@ -10,6 +10,7 @@ import {
 } from "./config";
 import { DmmfDocument } from "./dmmf/dmmf-document";
 import { DMMF } from "./dmmf/types";
+import { GeneratorOptions } from "./options";
 
 export function generateEnhanceMap(
   sourceFile: SourceFile,
@@ -19,6 +20,7 @@ export function generateEnhanceMap(
   models: readonly DMMF.Model[],
   inputs: readonly DMMF.InputType[],
   outputs: readonly DMMF.OutputType[],
+  generatorOptions: GeneratorOptions,
 ) {
   const hasRelations = relationModels.length > 0;
 
@@ -81,10 +83,17 @@ export function generateEnhanceMap(
                 mapping.modelTypeName,
                 Writers.object(
                   Object.fromEntries(
-                    mapping.actions.map(action => [
-                      action.name,
-                      `actionResolvers.${action.actionResolverName}`,
-                    ]),
+                    mapping.actions
+                      .filter(
+                        a =>
+                          !generatorOptions.emitActions?.includes(
+                            a.prismaMethod,
+                          ),
+                      )
+                      .map(action => [
+                        action.name,
+                        `actionResolvers.${action.actionResolverName}`,
+                      ]),
                   ),
                 ),
               ]),
@@ -103,6 +112,10 @@ export function generateEnhanceMap(
               modelMappings.map(mapping => [
                 mapping.modelTypeName,
                 `[${mapping.actions
+                  .filter(
+                    a =>
+                      !generatorOptions.emitActions?.includes(a.prismaMethod),
+                  )
                   .map(action => `"${action.name}"`)
                   .join(", ")}]`,
               ]),

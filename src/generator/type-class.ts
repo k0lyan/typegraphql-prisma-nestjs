@@ -182,6 +182,7 @@ export function generateInputTypeClassFromType(
   generateInputsImports(
     sourceFile,
     inputType.fields
+      .filter(f => !options.emitPropertyMethods?.includes(f.name))
       .filter(field => field.selectedInputType.location === "inputObjectTypes")
       .map(field => field.selectedInputType.type)
       .filter(fieldType => fieldType !== inputType.typeName),
@@ -189,13 +190,16 @@ export function generateInputTypeClassFromType(
   generateEnumsImports(
     sourceFile,
     inputType.fields
+      .filter(f => !options.emitPropertyMethods?.includes(f.name))
       .map(field => field.selectedInputType)
       .filter(fieldType => fieldType.location === "enumTypes")
       .map(fieldType => fieldType.type as string),
     2,
   );
 
-  const fieldsToEmit = inputType.fields.filter(field => !field.isOmitted);
+  const fieldsToEmit = inputType.fields
+    .filter(f => !options.emitPropertyMethods?.includes(f.name))
+    .filter(field => !field.isOmitted);
   const mappedFields = fieldsToEmit.filter(field => field.hasMappedName);
 
   sourceFile.addClass({
@@ -216,9 +220,8 @@ export function generateInputTypeClassFromType(
         ],
       },
     ],
-    properties: fieldsToEmit
-      .filter(f => !options.emitPropertyMethods?.includes(f.name))
-      .map<OptionalKind<PropertyDeclarationStructure>>(field => {
+    properties: fieldsToEmit.map<OptionalKind<PropertyDeclarationStructure>>(
+      field => {
         return {
           name: field.name,
           type: field.fieldTSType,
@@ -239,7 +242,8 @@ export function generateInputTypeClassFromType(
                 },
               ],
         };
-      }),
+      },
+    ),
     getAccessors: mappedFields.map<
       OptionalKind<GetAccessorDeclarationStructure>
     >(field => {

@@ -73,6 +73,13 @@ emitActions: 'findUnique, findUniqueOrThrow, findFirst, findFirstOrThrow, findMa
 emitPropertyMethods: 'create, connectOrCreate, upsert, set, disconnect, delete, connect, update, updateMany, deleteMany'
 ```
 
+### Add option to enable using Dataloader when retrieving nested objects
+
+```
+useDataloaderForResolveFields: 'true' // use dataloader for entities
+useDataloaderForAllResolveFields: 'true' // use dataloader for array of entities
+```
+
 ## Example use NestJS + Prisma2 + Typegraphql
 
 https://github.com/EndyKaufman/typegraphql-prisma-nestjs-example

@@ -11,6 +11,8 @@ export interface ExternalGeneratorOptions {
   emitRedundantTypesInfo?: boolean;
   customPrismaImportPath?: string;
   customPrismaImportPathIgnoreLevels?: boolean;
+  useDataloaderForResolveFields?: boolean;
+  useDataloaderForAllResolveFields?: boolean;
   contextPrismaKey?: string;
   useSimpleInputs?: boolean;
   optionalInputFieldsByDefault?: string[];
@@ -35,7 +37,7 @@ export interface InternalGeneratorOptions {
 
 export interface GeneratorOptions
   extends Omit<ExternalGeneratorOptions, "emitOnly" | "contextPrismaKey">,
-  InternalGeneratorOptions {
+    InternalGeneratorOptions {
   blocksToEmit: EmitBlockKind[];
   contextPrismaKey: string;
   relativePrismaOutputPath: string;

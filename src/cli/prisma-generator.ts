@@ -58,6 +58,8 @@ export async function generate(options: GeneratorOptions) {
     customPrismaImportPathIgnoreLevels: parseStringBoolean(
       generatorConfig.customPrismaImportPathIgnoreLevels,
     ),
+    useDataloaderForResolveFields: parseStringBoolean(generatorConfig.useDataloaderForResolveFields) ?? false,
+    useDataloaderForAllResolveFields: parseStringBoolean(generatorConfig.useDataloaderForAllResolveFields) ?? false,
     contextPrismaKey: parseString(
       generatorConfig.contextPrismaKey,
       "contextPrismaKey",

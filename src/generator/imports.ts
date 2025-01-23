@@ -24,6 +24,7 @@ export function generateTypeGraphQLImport(sourceFile: SourceFile) {
   sourceFile.addImportDeclaration({
     moduleSpecifier: "@nestjs/graphql",
     namedImports: [
+      "GqlExecutionContext",
       "Resolver",
       "ResolveField",
       "Root",
@@ -92,6 +93,7 @@ export function generateHelpersFileImport(sourceFile: SourceFile, level = 0) {
       "transformInfoIntoPrismaArgs",
       "getPrismaFromContext",
       "transformCountFieldIntoSelectRelationsCount",
+      "InlineLoader"
     ],
   });
 }

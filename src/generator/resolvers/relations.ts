@@ -67,6 +67,11 @@ export default function generateRelationsResolverClassesFromModel(
   generateArgsImports(sourceFile, argTypeNames, 0);
   generateHelpersFileImport(sourceFile, 3);
 
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: "dataloader",
+    namespaceImport: "DataLoader",
+  });
+
   sourceFile.addClass({
     name: resolverName,
     isExported: true,
@@ -102,6 +107,84 @@ export default function generateRelationsResolverClassesFromModel(
           throw new Error(
             `Unexpected error happened on generating 'whereConditionString' for ${model.typeName} relation resolver`,
           );
+        }
+
+        const relationFromField = dmmfDocument.relationModels
+          .find(m => m.model.name === field.name)
+          ?.model?.fields?.find(f => f?.name === model?.name)
+          ?.relationFromFields?.[0];
+
+        if (
+          generatorOptions.useDataloaderForAllResolveFields ||
+          (generatorOptions.useDataloaderForResolveFields &&
+            !field.argsTypeName)
+        ) {
+          return {
+            name: field.typeFieldAlias ?? field.name,
+            isAsync: true,
+            returnType: `Promise<${field.fieldTSType}>`,
+            decorators: [
+              {
+                name: "ResolveField",
+                arguments: [
+                  `_type => ${field.typeGraphQLType}`,
+                  Writers.object({
+                    nullable: `${!field.isRequired}`,
+                    ...(field.docs && { description: `"${field.docs}"` }),
+                  }),
+                ],
+              },
+            ],
+            parameters: [
+              {
+                name: rootArgName,
+                type: model.typeName,
+                decorators: [{ name: "Root", arguments: [] }],
+              },
+              {
+                name: "ctx",
+                // TODO: import custom `ContextType`
+                type: "any",
+                decorators: [{ name: "Context", arguments: [] }],
+              },
+              {
+                name: "info",
+                type: "GraphQLResolveInfo",
+                decorators: [{ name: "Info", arguments: [] }],
+              },
+              {
+                name: "dataloader",
+                type: `DataLoader<string, ${field.typeFieldAlias ?? field.type}${field.isList ? "[]" : ""}>`,
+                decorators: [
+                  {
+                    name: "InlineLoader",
+                    arguments: [
+                      `<ID,Type>(context)=>{    
+              const graphqlExecutionContext = GqlExecutionContext.create(context);
+              const ctx = graphqlExecutionContext.getContext();
+              return new DataLoader<ID,Type>(
+                async (ids) => {
+                    const result:${field.type}[] = await getPrismaFromContext(ctx).${camelCase(field.type)}.findMany({
+                      where: {
+                        ${relationFromField || field.relationToFields?.[0] || "id"}: { in: ids },
+                      },
+                    });
+                    return ids.map(id=>result.${field.isList?'filter':'find'}(r=>r.${field.relationToFields?.[0] || "id"}===id)||${field.isList?'[]':'null'}) as Type[]
+                }
+              )
+            }`,
+                    ],
+                  },
+                ],
+              },
+            ],
+            // TODO: refactor to AST
+            statements: [
+              field.isRequired
+                ? ` return await dataloader.load(${rootArgName}.${field.relationFromFields?.[0] || "id"});`
+                : /* ts */ ` return !${rootArgName}.${field.relationFromFields?.[0] || "id"}?${field.isList ? "[]" : "null"}:await dataloader.load(${rootArgName}.${field.relationFromFields?.[0] || "id"});`,
+            ],
+          };
         }
         return {
           name: field.typeFieldAlias ?? field.name,

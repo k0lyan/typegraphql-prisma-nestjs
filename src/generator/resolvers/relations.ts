@@ -114,6 +114,10 @@ export default function generateRelationsResolverClassesFromModel(
           ?.model?.fields?.find(f => f?.name === model?.name)
           ?.relationFromFields?.[0];
 
+        const relationFromFieldType = dmmfDocument.relationModels
+          .find(m => m.model.name === field.name)
+          ?.model?.fields?.find(f => f?.isId)?.fieldTSType;
+
         if (
           generatorOptions.useDataloaderForAllResolveFields ||
           (generatorOptions.useDataloaderForResolveFields &&
@@ -154,7 +158,7 @@ export default function generateRelationsResolverClassesFromModel(
               },
               {
                 name: "dataloader",
-                type: `DataLoader<string, ${field.typeFieldAlias ?? field.type}${field.isList ? "[]" : ""}>`,
+                type: `DataLoader<${relationFromFieldType || "string"}, ${field.typeFieldAlias ?? field.type}${field.isList ? "[]" : ""}>`,
                 decorators: [
                   {
                     name: "InlineLoader",
@@ -169,7 +173,7 @@ export default function generateRelationsResolverClassesFromModel(
                         ${relationFromField || field.relationToFields?.[0] || "id"}: { in: ids },
                       },
                     });
-                    return ids.map(id=>result.${field.isList?'filter':'find'}(r=>r.${field.relationToFields?.[0] || "id"}===id)||${field.isList?'[]':'null'}) as Type[]
+                    return ids.map(id=>result.${field.isList ? "filter" : "find"}(r=>r.${field.relationToFields?.[0] || "id"}===id)||${field.isList ? "[]" : "null"}) as Type[]
                 }
               )
             }`,

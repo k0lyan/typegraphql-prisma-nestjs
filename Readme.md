@@ -78,6 +78,9 @@ emitPropertyMethods: 'create, connectOrCreate, upsert, set, disconnect, delete, 
 ```
 useDataloaderForResolveFields: 'true' // use dataloader for entities
 useDataloaderForAllResolveFields: 'true' // use dataloader for array of entities
+useDataloaderMaxBatchSize: undefined // default `Infinity`. Limits the number of items that get passed in to the `batchLoadFn`. May be set to `1` to disable batching.
+useDataloaderBatchScheduleFnDelay: 100 // the delay is needed to solve the problem with nextTick (https://github.com/graphql/dataloader/issues/285#issuecomment-2613792744), if the number of parallel requests is very large, then you need to increase this delay
+useDataloaderCache: false // caching value with equal keys
 ```
 
 ## Example use NestJS + Prisma2 + Typegraphql

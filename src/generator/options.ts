@@ -13,6 +13,9 @@ export interface ExternalGeneratorOptions {
   customPrismaImportPathIgnoreLevels?: boolean;
   useDataloaderForResolveFields?: boolean;
   useDataloaderForAllResolveFields?: boolean;
+  useDataloaderMaxBatchSize?: number;
+  useDataloaderBatchScheduleFnDelay?: number;
+  useDataloaderCache?: boolean;
   contextPrismaKey?: string;
   useSimpleInputs?: boolean;
   optionalInputFieldsByDefault?: string[];

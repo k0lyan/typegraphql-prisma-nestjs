@@ -123,6 +123,20 @@ export default function generateRelationsResolverClassesFromModel(
           (generatorOptions.useDataloaderForResolveFields &&
             !field.argsTypeName)
         ) {
+          const datamapperOptions = [
+            generatorOptions.useDataloaderMaxBatchSize !== undefined
+              ? `maxBatchSize: ${generatorOptions.useDataloaderMaxBatchSize}`
+              : undefined,
+            generatorOptions.useDataloaderCache !== undefined
+              ? `cache: ${generatorOptions.useDataloaderCache}`
+              : undefined,
+            generatorOptions.useDataloaderBatchScheduleFnDelay !== undefined
+              ? `batchScheduleFn: (cb) => setTimeout(() => process.nextTick(cb), ${generatorOptions.useDataloaderBatchScheduleFnDelay})`
+              : undefined,
+          ].filter(Boolean);
+          const datamapperOptionsText = datamapperOptions.length
+            ? "," + datamapperOptions.join(",")
+            : "";
           return {
             name: field.typeFieldAlias ?? field.name,
             isAsync: true,
@@ -174,7 +188,7 @@ export default function generateRelationsResolverClassesFromModel(
                       },
                     });
                     return ids.map(id=>result.${field.isList ? "filter" : "find"}(r=>r.${field.relationToFields?.[0] || "id"}===id)||${field.isList ? "[]" : "null"}) as Type[]
-                }
+                }${datamapperOptionsText}
               )
             }`,
                     ],

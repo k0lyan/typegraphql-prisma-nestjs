@@ -58,8 +58,28 @@ export async function generate(options: GeneratorOptions) {
     customPrismaImportPathIgnoreLevels: parseStringBoolean(
       generatorConfig.customPrismaImportPathIgnoreLevels,
     ),
-    useDataloaderForResolveFields: parseStringBoolean(generatorConfig.useDataloaderForResolveFields) ?? false,
-    useDataloaderForAllResolveFields: parseStringBoolean(generatorConfig.useDataloaderForAllResolveFields) ?? false,
+
+    useDataloaderForResolveFields:
+      parseStringBoolean(generatorConfig.useDataloaderForResolveFields) ??
+      false,
+    useDataloaderForAllResolveFields:
+      parseStringBoolean(generatorConfig.useDataloaderForAllResolveFields) ??
+      false,
+
+    useDataloaderMaxBatchSize:
+      generatorConfig.useDataloaderForResolveFields === undefined ||
+      isNaN(+generatorConfig.useDataloaderForResolveFields)
+        ? undefined
+        : +generatorConfig.useDataloaderForResolveFields,
+    useDataloaderBatchScheduleFnDelay:
+      generatorConfig.useDataloaderForResolveFields === undefined ||
+      isNaN(+generatorConfig.useDataloaderForResolveFields)
+        ? 100
+        : +generatorConfig.useDataloaderForResolveFields,
+    useDataloaderCache:
+      parseStringBoolean(generatorConfig.useDataloaderCache) ??
+      false,
+
     contextPrismaKey: parseString(
       generatorConfig.contextPrismaKey,
       "contextPrismaKey",

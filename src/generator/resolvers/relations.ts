@@ -135,7 +135,7 @@ export default function generateRelationsResolverClassesFromModel(
               : undefined,
           ].filter(Boolean);
           const datamapperOptionsText = datamapperOptions.length
-            ? "," + datamapperOptions.join(",")
+            ? `, {${datamapperOptions.join(",")}}`
             : "";
           return {
             name: field.typeFieldAlias ?? field.name,

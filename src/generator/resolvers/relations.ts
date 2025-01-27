@@ -170,7 +170,7 @@ export default function generateRelationsResolverClassesFromModel(
                 type: "GraphQLResolveInfo",
                 decorators: [{ name: "Info", arguments: [] }],
               },
-              ...(!field.argsTypeName
+              ...((generatorOptions.useDataloaderForAllResolveFields || !field.argsTypeName)
                 ? []
                 : [
                     {
@@ -226,7 +226,7 @@ export default function generateRelationsResolverClassesFromModel(
             statements: [
               "(dataloader as any).info = info;",
               "(dataloader as any).context = ctx;",
-              !field.argsTypeName
+              (generatorOptions.useDataloaderForAllResolveFields || !field.argsTypeName)
                 ? "(dataloader as any).args = {};"
                 : "(dataloader as any).args = args;",
               field.isRequired

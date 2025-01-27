@@ -201,9 +201,9 @@ export default function generateRelationsResolverClassesFromModel(
                     const context = (loader as any).context;
                     const info = (loader as any).info;
                     const args = (loader as any).args;
-                    const { _count } = transformInfoIntoPrismaArgs(info, '${model.name}', '${camelCase(model.name)}', 'findMany');
-                    const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, context, '${model.name}', '${camelCase(model.name)}', 'findMany', []);
-                    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, '${model.name}', '${camelCase(model.name)}', 'findMany');
+                    const { _count } = transformInfoIntoPrismaArgs(info, '${model.name}', '${camelCase(model.name)}', 'findMany', true);
+                    const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, context, '${model.name}', '${camelCase(model.name)}', 'findMany', [], true);
+                    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, '${model.name}', '${camelCase(model.name)}', 'findMany', true);
                     const allArgs = { ...transformedArgsIntoPrismaArgs, ...otherArgs, };
                     const result:${field.type}[] = await getPrismaFromContext(ctx).${camelCase(field.type)}.findMany({
                       ...allArgs,

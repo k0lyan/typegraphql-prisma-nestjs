@@ -40,7 +40,7 @@ export function generateHelpersFile(
   });
 
   sourceFile.addStatements(/* ts */ `
-    export function transformInfoIntoPrismaArgs(info: GraphQLResolveInfo, modelName?: string, collectionName?: string, prismaMethod?: string): Record<string, any> {
+    export function transformInfoIntoPrismaArgs(info: GraphQLResolveInfo, modelName?: string, collectionName?: string, prismaMethod?: string, isResolveField?: boolean): Record<string, any> {
       const fields: Record<string, any> = graphqlFields(
         // suppress GraphQLResolveInfo types issue
         info as any,
@@ -50,12 +50,12 @@ export function generateHelpersFile(
           processArguments: true,
         }
       );
-      return transformFields(fields, modelName, collectionName, prismaMethod);
+      return transformFields(fields, modelName, collectionName, prismaMethod, isResolveField);
     }
   `);
 
   sourceFile.addStatements(/* ts */ `
-    function transformFields(fields: Record<string, any>, modelName?: string, collectionName?: string, prismaMethod?: string): Record<string, any> {
+    function transformFields(fields: Record<string, any>, modelName?: string, collectionName?: string, prismaMethod?: string, isResolveField?: boolean): Record<string, any> {
       return Object.fromEntries(
         Object.entries(fields)
           .map<[string, any]>(([key, value]) => {
@@ -70,7 +70,7 @@ export function generateHelpersFile(
                 })
               )];
             }
-            return [key, transformFields(value, modelName, collectionName, prismaMethod)];
+            return [key, transformFields(value, modelName, collectionName, prismaMethod, isResolveField)];
           }),
       );
     }
@@ -87,7 +87,7 @@ export function generateHelpersFile(
   `);
 
   sourceFile.addStatements(/* ts */ `
-    export function transformCountFieldIntoSelectRelationsCount(_count: object, modelName?: string, collectionName?: string, prismaMethod?: string) {
+    export function transformCountFieldIntoSelectRelationsCount(_count: object, modelName?: string, collectionName?: string, prismaMethod?: string, isResolveField?: boolean) {
       return {
         include: {
           _count: {
@@ -103,7 +103,7 @@ export function generateHelpersFile(
   `);
 
   sourceFile.addStatements(/* ts */ `
-    export let transformArgsIntoPrismaArgs = async function <TArgs = Record<string, any>, TContext = any>(info: GraphQLResolveInfo, args: TArgs, ctx: TContext, modelName?: string, collectionName?: string, prismaMethod?: string, afterProcessEvents?: ((result:any) => Promise<any>)[]): Promise<TArgs> {
+    export let transformArgsIntoPrismaArgs = async function <TArgs = Record<string, any>, TContext = any>(info: GraphQLResolveInfo, args: TArgs, ctx: TContext, modelName?: string, collectionName?: string, prismaMethod?: string, afterProcessEvents?: ((result:any) => Promise<any>)[], isResolveField?: boolean): Promise<TArgs> {
         return args;
     };
 

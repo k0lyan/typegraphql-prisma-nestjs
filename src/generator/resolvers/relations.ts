@@ -208,7 +208,7 @@ export default function generateRelationsResolverClassesFromModel(
                     const result:${field.type}[] = await getPrismaFromContext(ctx).${camelCase(field.type)}.findMany({
                       ...allArgs,
                       where: {
-                        ...allArgs.where || {}),
+                        ...(allArgs.where || {}),
                         ${relationFromField || field.relationToFields?.[0] || "id"}: { in: ids },
                       },
                     });

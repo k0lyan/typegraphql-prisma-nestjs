@@ -170,6 +170,22 @@ export default function generateRelationsResolverClassesFromModel(
                 type: "GraphQLResolveInfo",
                 decorators: [{ name: "Info", arguments: [] }],
               },
+              ...(!field.argsTypeName
+                ? []
+                : [
+                    {
+                      name: "args",
+                      type: field.argsTypeName,
+                      decorators: [
+                        {
+                          name: "Args",
+                          arguments: generatorOptions.emitRedundantTypesInfo
+                            ? [`_type => ${field.argsTypeName}`]
+                            : [],
+                        },
+                      ],
+                    },
+                  ]),
               {
                 name: "dataloader",
                 type: `DataLoader<${relationFromFieldType || "string"}, ${field.typeFieldAlias ?? field.type}${field.isList ? "[]" : ""}>`,
@@ -180,16 +196,19 @@ export default function generateRelationsResolverClassesFromModel(
                       `<ID,Type>(context)=>{    
               const graphqlExecutionContext = GqlExecutionContext.create(context);
               const ctx = graphqlExecutionContext.getContext();
-              return new DataLoader<ID,Type>(
+              const loader = new DataLoader<ID,Type>(
                 async (ids) => {
                     const result:${field.type}[] = await getPrismaFromContext(ctx).${camelCase(field.type)}.findMany({
+                      ...((loader as any).args||{}),
                       where: {
+                        ...(((loader as any).args||{}).where||{}),
                         ${relationFromField || field.relationToFields?.[0] || "id"}: { in: ids },
                       },
                     });
-                    return ids.map(id=>result.${field.isList ? "filter" : "find"}(r=>r.${field.relationToFields?.[0] || "id"}===id)||${field.isList ? "[]" : "null"}) as Type[]
+                    return ids.map(id=>result.${field.isList ? "filter" : "find"}(r=>r.${relationFromField || field.relationToFields?.[0] || "id"}===id)||${field.isList ? "[]" : "null"}) as Type[]
                 }${datamapperOptionsText}
-              )
+              );
+              return loader;
             }`,
                     ],
                   },
@@ -198,6 +217,9 @@ export default function generateRelationsResolverClassesFromModel(
             ],
             // TODO: refactor to AST
             statements: [
+              !field.argsTypeName
+                ? "(dataloader as any).args = {};"
+                : "(dataloader as any).args = args;",
               field.isRequired
                 ? ` return await dataloader.load(${rootArgName}.${field.relationFromFields?.[0] || "id"});`
                 : /* ts */ ` return !${rootArgName}.${field.relationFromFields?.[0] || "id"}?${field.isList ? "[]" : "null"}:await dataloader.load(${rootArgName}.${field.relationFromFields?.[0] || "id"});`,

@@ -198,10 +198,17 @@ export default function generateRelationsResolverClassesFromModel(
               const ctx = graphqlExecutionContext.getContext();
               const loader = new DataLoader<ID,Type>(
                 async (ids) => {
+                    const context = (loader as any).context;
+                    const info = (loader as any).info;
+                    const args = (loader as any).args;
+                    const { _count } = transformInfoIntoPrismaArgs(info, '${model.name}', '${camelCase(model.name)}', 'findMany');
+                    const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, context, '${model.name}', '${camelCase(model.name)}', 'findMany', []);
+                    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, '${model.name}', '${camelCase(model.name)}', 'findMany');
+                    const allArgs = { ...transformedArgsIntoPrismaArgs, ...otherArgs, };
                     const result:${field.type}[] = await getPrismaFromContext(ctx).${camelCase(field.type)}.findMany({
-                      ...((loader as any).args||{}),
+                      ...allArgs,
                       where: {
-                        ...(((loader as any).args||{}).where||{}),
+                        ...allArgs.where || {}),
                         ${relationFromField || field.relationToFields?.[0] || "id"}: { in: ids },
                       },
                     });
@@ -217,6 +224,8 @@ export default function generateRelationsResolverClassesFromModel(
             ],
             // TODO: refactor to AST
             statements: [
+              "(dataloader as any).info = info;",
+              "(dataloader as any).context = ctx;",
               !field.argsTypeName
                 ? "(dataloader as any).args = {};"
                 : "(dataloader as any).args = args;",

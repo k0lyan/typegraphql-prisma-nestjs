@@ -139,6 +139,17 @@ export function generateOutputTypeClassFromType(
               Writers.object({
                 name: `"${field.name}"`,
                 nullable: `${!field.isRequired}`,
+                // fix for https://github.com/EndyKaufman/typegraphql-prisma-nestjs/issues/49
+                ...(field.typeGraphQLType === "Int" &&
+                type.typeName.endsWith("Count")
+                  ? {
+                      middleware: `[
+            async (ctx) => {
+                return ctx.source.${field.name} || 0;
+            },
+        ]`,
+                    }
+                  : {}),
               }),
             ],
           },

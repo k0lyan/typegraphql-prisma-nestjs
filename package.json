@@ -1,6 +1,6 @@
 {
   "name": "typegraphql-prisma-nestjs",
-  "version": "0.2800.015",
+  "version": "0.2800.016",
   "scripts": {
     "prepare": "husky install",
     "build": "tsc",

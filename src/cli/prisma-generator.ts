@@ -22,9 +22,13 @@ export async function generate(options: GeneratorOptions) {
   await asyncFs.mkdir(outputDir, { recursive: true });
   await removeDir(outputDir, true);
 
-  const prismaClientProvider = options.otherGenerators.find(
-    it => parseEnvValue(it.provider) === "prisma-client-js",
-  )!;
+  const prismaClientProvider =
+    options.otherGenerators.find(
+      it => parseEnvValue(it.provider) === "prisma-client-js",
+    )! ||
+    options.otherGenerators.find(
+      it => parseEnvValue(it.provider) === "prisma-client",
+    )!;
   const prismaClientPath = parseEnvValue(prismaClientProvider.output!);
   const prismaClientDmmf = await getDMMF({
     datamodel: options.datamodel,
@@ -77,8 +81,7 @@ export async function generate(options: GeneratorOptions) {
         ? 100
         : +generatorConfig.useDataloaderForResolveFields,
     useDataloaderCache:
-      parseStringBoolean(generatorConfig.useDataloaderCache) ??
-      false,
+      parseStringBoolean(generatorConfig.useDataloaderCache) ?? false,
 
     contextPrismaKey: parseString(
       generatorConfig.contextPrismaKey,

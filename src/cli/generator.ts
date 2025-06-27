@@ -6,7 +6,7 @@ generatorHandler({
   onManifest: () => ({
     defaultOutput: "node_modules/@generated/type-graphql-nestjs",
     prettyName: "TypeGraphQL + NestJS integration",
-    requiresGenerators: ["prisma-client-js"],
+    // requiresGenerators: ["prisma-client-js"],
   }),
   onGenerate: generate,
 });

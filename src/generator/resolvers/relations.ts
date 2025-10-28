@@ -212,7 +212,7 @@ export default function generateRelationsResolverClassesFromModel(
                         ${relationFromField || field.relationToFields?.[0] || "id"}: { in: ids },
                       },
                     });
-                    return ids.map(id=>result.${field.isList ? "filter" : "find"}(r=>r.${relationFromField || field.relationToFields?.[0] || "id"}===id)||${field.isList ? "[]" : "null"}) as Type[]
+                    return ids.map(id=>result.${field.isList ? "filter" : "find"}(r=>r.${relationFromField || field.relationToFields?.[0] || "id"}===id)||${field.isList ? "[]" : "null"}).filter(Boolean) as Type[]
                 }${datamapperOptionsText}
               );
               return loader;

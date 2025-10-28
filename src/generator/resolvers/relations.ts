@@ -147,7 +147,7 @@ export default function generateRelationsResolverClassesFromModel(
                 arguments: [
                   `_type => ${field.typeGraphQLType}`,
                   Writers.object({
-                    nullable: `${!field.isRequired}`,
+                    nullable: `true`,
                     ...(field.docs && { description: `"${field.docs}"` }),
                   }),
                 ],
@@ -212,7 +212,7 @@ export default function generateRelationsResolverClassesFromModel(
                         ${relationFromField || field.relationToFields?.[0] || "id"}: { in: ids },
                       },
                     });
-                    return ids.map(id=>result.${field.isList ? "filter" : "find"}(r=>r.${relationFromField || field.relationToFields?.[0] || "id"}===id)||${field.isList ? "[]" : "null"}).filter(Boolean) as Type[]
+                    return ids.map(id=>result.${field.isList ? "filter" : "find"}(r=>r.${relationFromField || field.relationToFields?.[0] || "id"}===id)||${field.isList ? "[]" : "null"}) as Type[]
                 }${datamapperOptionsText}
               );
               return loader;

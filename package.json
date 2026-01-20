@@ -1,6 +1,6 @@
 {
   "name": "typegraphql-prisma-nestjs",
-  "version": "0.2800.019",
+  "version": "0.28.19",
   "scripts": {
     "prepare": "husky install",
     "build": "tsc",
@@ -83,10 +83,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/EndyKaufman/typegraphql-prisma-nestjs.git"
+    "url": "https://github.com/k0lyan/typegraphql-prisma-nestjs.git"
   },
   "bugs": {
-    "url": "https://github.com/EndyKaufman/typegraphql-prisma-nestjs/issues"
+    "url": "https://github.com/k0lyan/typegraphql-prisma-nestjs/issues"
   },
   "keywords": [
     "nestjs",

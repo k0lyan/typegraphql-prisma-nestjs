@@ -65,23 +65,23 @@ export function generateCrudResolverClassMethodDeclaration(
             /* ts */ `return result;`,
           ]
         : action.kind === DMMF.ModelAction.groupBy
-        ? [
-            /* ts */ `const afterProcessEvents: ((result:any) => Promise<any>)[] = [];`,
-            /* ts */ `const { _count, _avg, _sum, _min, _max } = transformInfoIntoPrismaArgs(info, '${mapping.modelName}', '${mapping.collectionName}', '${action.prismaMethod}');`,
-            /* ts */ `const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, '${mapping.modelName}', '${mapping.collectionName}', '${action.prismaMethod}', afterProcessEvents);`,
-            /* ts */ `const groupByArgs = Object.fromEntries( Object.entries({ _count, _avg, _sum, _min, _max }).filter(([_, v]) => v != null));`,
-            /* ts */ `const result = await getPrismaFromContext(ctx).${mapping.collectionName}.${action.prismaMethod}({ ...transformedArgsIntoPrismaArgs, ...groupByArgs,});`,
-            /* ts */ `for (const afterProcessEvent of afterProcessEvents){ await afterProcessEvent(result); }`,
-            /* ts */ `return result;`,
-          ]
-        : [
-            /* ts */ ` const afterProcessEvents: ((result:any) => Promise<any>)[] = [];`,
-            /* ts */ ` const { _count } = transformInfoIntoPrismaArgs(info, '${mapping.modelName}', '${mapping.collectionName}', '${action.prismaMethod}');`,
-            /* ts */ ` const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, '${mapping.modelName}', '${mapping.collectionName}', '${action.prismaMethod}', afterProcessEvents);`,
-            /* ts */ ` const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, '${mapping.modelName}', '${mapping.collectionName}', '${action.prismaMethod}');`,
-            /* ts */ ` const result = await getPrismaFromContext(ctx).${mapping.collectionName}.${action.prismaMethod}({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });`,
-            /* ts */ ` for (const afterProcessEvent of afterProcessEvents){ await afterProcessEvent(result); }`,
-            /* ts */ `return result;`,
-          ],
+          ? [
+              /* ts */ `const afterProcessEvents: ((result:any) => Promise<any>)[] = [];`,
+              /* ts */ `const { _count, _avg, _sum, _min, _max } = transformInfoIntoPrismaArgs(info, '${mapping.modelName}', '${mapping.collectionName}', '${action.prismaMethod}');`,
+              /* ts */ `const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, '${mapping.modelName}', '${mapping.collectionName}', '${action.prismaMethod}', afterProcessEvents);`,
+              /* ts */ `const groupByArgs = Object.fromEntries( Object.entries({ _count, _avg, _sum, _min, _max }).filter(([_, v]) => v != null));`,
+              /* ts */ `const result = await getPrismaFromContext(ctx).${mapping.collectionName}.${action.prismaMethod}({ ...transformedArgsIntoPrismaArgs, ...groupByArgs,});`,
+              /* ts */ `for (const afterProcessEvent of afterProcessEvents){ await afterProcessEvent(result); }`,
+              /* ts */ `return result;`,
+            ]
+          : [
+              /* ts */ ` const afterProcessEvents: ((result:any) => Promise<any>)[] = [];`,
+              /* ts */ ` const { _count } = transformInfoIntoPrismaArgs(info, '${mapping.modelName}', '${mapping.collectionName}', '${action.prismaMethod}');`,
+              /* ts */ ` const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, '${mapping.modelName}', '${mapping.collectionName}', '${action.prismaMethod}', afterProcessEvents);`,
+              /* ts */ ` const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, '${mapping.modelName}', '${mapping.collectionName}', '${action.prismaMethod}');`,
+              /* ts */ ` const result = await getPrismaFromContext(ctx).${mapping.collectionName}.${action.prismaMethod}({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });`,
+              /* ts */ ` for (const afterProcessEvent of afterProcessEvents){ await afterProcessEvent(result); }`,
+              /* ts */ `return result;`,
+            ],
   };
 }

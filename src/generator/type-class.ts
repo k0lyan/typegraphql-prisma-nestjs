@@ -6,6 +6,7 @@ import {
   Project,
   PropertyDeclarationStructure,
   SetAccessorDeclarationStructure,
+  SourceFile,
   Writers,
 } from "ts-morph";
 
@@ -158,7 +159,7 @@ export function generateOutputTypeClassFromType(
           {
             name: "root",
             type: type.typeName,
-            decorators: [{ name: "Root", arguments: [] }],
+            decorators: [{ name: "Parent", arguments: [] }],
           },
           {
             name: "args",
@@ -245,7 +246,7 @@ export function generateInputTypeClassFromType(
                 {
                   name: "Field",
                   arguments: [
-                    `_type => ${field.typeGraphQLType}`,
+                    `() => ${field.typeGraphQLType}`,
                     Writers.object({
                       nullable: `${!!field.isOptional || !field.isRequired}`,
                     }),
@@ -269,7 +270,7 @@ export function generateInputTypeClassFromType(
           {
             name: "Field",
             arguments: [
-              `_type => ${field.typeGraphQLType}`,
+              `() => ${field.typeGraphQLType}`,
               Writers.object({
                 nullable: `${!field.isRequired}`,
               }),
@@ -292,4 +293,132 @@ export function generateInputTypeClassFromType(
       };
     }),
   });
+}
+
+/**
+ * Generate ALL input types in a single file to avoid circular dependency issues.
+ * When input types are in separate files and import each other via index.ts,
+ * Node.js cannot resolve the circular references at runtime.
+ */
+export function generateAllInputTypesInSingleFile(
+  project: Project,
+  dirPath: string,
+  inputTypes: readonly DMMF.InputType[],
+  options: GeneratorOptions,
+): string[] {
+  const fileDirPath = path.resolve(dirPath, inputsFolderName);
+  const filePath = path.resolve(fileDirPath, "index.ts");
+  const sourceFile = project.createSourceFile(filePath, undefined, {
+    overwrite: true,
+  });
+
+  // Collect all enum types used across all input types
+  const allEnumTypeNames = new Set<string>();
+  for (const inputType of inputTypes) {
+    for (const field of inputType.fields) {
+      if (field.selectedInputType.location === "enumTypes") {
+        allEnumTypeNames.add(field.selectedInputType.type as string);
+      }
+    }
+  }
+
+  // Generate common imports once at the top
+  generateTypeGraphQLImport(sourceFile);
+  generateGraphQLScalarsImport(sourceFile);
+  generatePrismaNamespaceImport(sourceFile, options, 1);
+  generateCustomScalarsImport(sourceFile, 1);
+  if (allEnumTypeNames.size > 0) {
+    generateEnumsImports(sourceFile, [...allEnumTypeNames], 1);
+  }
+
+  // Generate all input type classes in this single file
+  for (const inputType of inputTypes) {
+    const fieldsToEmit = inputType.fields
+      .filter(f => !options.emitPropertyMethods?.includes(f.name))
+      .filter(field => !field.isOmitted);
+    const mappedFields = fieldsToEmit.filter(field => field.hasMappedName);
+
+    sourceFile.addClass({
+      name: inputType.typeName,
+      isExported: true,
+      decorators: [
+        {
+          name: "InputType",
+          arguments: [
+            `"${[options.inputTypePrefix, inputType.typeName]
+              .filter(Boolean)
+              .join("")}"`,
+            Writers.object({
+              ...(options.emitIsAbstract && {
+                isAbstract: "true",
+              }),
+            }),
+          ],
+        },
+      ],
+      properties: fieldsToEmit.map<OptionalKind<PropertyDeclarationStructure>>(
+        field => {
+          return {
+            name: field.name,
+            type: field.fieldTSType,
+            hasExclamationToken: !!field.isRequired,
+            hasQuestionToken: !field.isRequired,
+            trailingTrivia: "\r\n",
+            decorators: field.hasMappedName
+              ? []
+              : [
+                  {
+                    name: "Field",
+                    arguments: [
+                      `() => ${field.typeGraphQLType}`,
+                      Writers.object({
+                        nullable: `${!!field.isOptional || !field.isRequired}`,
+                      }),
+                    ],
+                  },
+                ],
+          };
+        },
+      ),
+      getAccessors: mappedFields.map<
+        OptionalKind<GetAccessorDeclarationStructure>
+      >(field => {
+        return {
+          name: field.typeName,
+          type: field.fieldTSType,
+          hasExclamationToken: field.isRequired,
+          hasQuestionToken: !field.isRequired,
+          trailingTrivia: "\r\n",
+          statements: [`return this.${field.name};`],
+          decorators: [
+            {
+              name: "Field",
+              arguments: [
+                `() => ${field.typeGraphQLType}`,
+                Writers.object({
+                  nullable: `${!!field.isOptional || !field.isRequired}`,
+                }),
+              ],
+            },
+          ],
+        };
+      }),
+      setAccessors: mappedFields.map<
+        OptionalKind<SetAccessorDeclarationStructure>
+      >(field => {
+        return {
+          name: field.typeName,
+          type: field.fieldTSType,
+          hasExclamationToken: field.isRequired,
+          hasQuestionToken: !field.isRequired,
+          trailingTrivia: "\r\n",
+          parameters: [{ name: field.name, type: field.fieldTSType }],
+          statements: [`this.${field.name} = ${field.name};`],
+        };
+      }),
+    });
+  }
+
+  // Return array of type names for reference
+  return inputTypes.map(type => type.typeName);
 }

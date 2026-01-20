@@ -24,23 +24,22 @@ export function generateTypeGraphQLImport(sourceFile: SourceFile) {
   sourceFile.addImportDeclaration({
     moduleSpecifier: "@nestjs/graphql",
     namedImports: [
-      "GqlExecutionContext",
-      "Resolver",
-      "ResolveField",
-      "Root",
-      "Context",
-      "Query",
-      "Mutation",
       "Args",
-      "registerEnumType",
-      "ObjectType",
+      "ArgsType",
+      "Context",
       "Field",
-      "Int",
       "Float",
       "ID",
-      "InputType",
-      "ArgsType",
       "Info",
+      "InputType",
+      "Int",
+      "Mutation",
+      "ObjectType",
+      "Parent",
+      "Query",
+      "registerEnumType",
+      "ResolveField",
+      "Resolver",
     ].sort(),
   });
 }
@@ -48,7 +47,7 @@ export function generateTypeGraphQLImport(sourceFile: SourceFile) {
 export function generateGraphQLFieldsImport(sourceFile: SourceFile) {
   sourceFile.addImportDeclaration({
     moduleSpecifier: "graphql-fields",
-    namespaceImport: "graphqlFields",
+    defaultImport: "graphqlFields",
   });
 }
 
@@ -93,7 +92,7 @@ export function generateHelpersFileImport(sourceFile: SourceFile, level = 0) {
       "transformInfoIntoPrismaArgs",
       "getPrismaFromContext",
       "transformCountFieldIntoSelectRelationsCount",
-      "InlineLoader"
+      "InlineLoader",
     ],
   });
 }
@@ -107,10 +106,13 @@ export function generatePrismaNamespaceImport(
     moduleSpecifier:
       options.absolutePrismaOutputPath ??
       (!options.customPrismaImportPathIgnoreLevels && level === 0 ? "./" : "") +
-      (options.customPrismaImportPathIgnoreLevels ? options.customPrismaImportPath ?? options.relativePrismaOutputPath : path.posix.join(
-        ...Array(level).fill(".."),
-        options.customPrismaImportPath ?? options.relativePrismaOutputPath,
-      )),
+        (options.customPrismaImportPathIgnoreLevels
+          ? (options.customPrismaImportPath ?? options.relativePrismaOutputPath)
+          : path.posix.join(
+              ...Array(level).fill(".."),
+              options.customPrismaImportPath ??
+                options.relativePrismaOutputPath,
+            )),
     namedImports: ["Prisma"],
   });
 }
@@ -174,12 +176,13 @@ export function generateInputsBarrelFile(
   sourceFile: SourceFile,
   inputTypeNames: string[],
 ) {
+  // Use export * to re-export all from each file
+  // This helps with circular dependency resolution in some cases
   sourceFile.addExportDeclarations(
     inputTypeNames
       .sort()
       .map<OptionalKind<ExportDeclarationStructure>>(inputTypeName => ({
         moduleSpecifier: `./${inputTypeName}`,
-        namedExports: [inputTypeName],
       })),
   );
 }
@@ -231,7 +234,7 @@ export function generateIndexFile(
       declarations: [
         {
           name: "crudResolvers",
-          initializer: `Object.values(crudResolversImport) as unknown as NonEmptyArray<Function>`,
+          initializer: `Object.values(crudResolversImport) as Function[]`,
         },
       ],
     });
@@ -250,7 +253,7 @@ export function generateIndexFile(
       declarations: [
         {
           name: "relationResolvers",
-          initializer: `Object.values(relationResolversImport) as unknown as NonEmptyArray<Function>`,
+          initializer: `Object.values(relationResolversImport) as Function[]`,
         },
       ],
     });
@@ -270,12 +273,6 @@ export function generateIndexFile(
     { moduleSpecifier: `./enhance` },
     { moduleSpecifier: `./scalars` },
   ]);
-  sourceFile.addImportDeclarations([
-    {
-      moduleSpecifier: `type-graphql`,
-      namedImports: ["NonEmptyArray"],
-    },
-  ]);
 
   if (
     blocksToEmit.includes("crudResolvers") ||
@@ -289,11 +286,12 @@ export function generateIndexFile(
           name: "resolvers",
           initializer: `[
             ${blocksToEmit.includes("crudResolvers") ? "...crudResolvers," : ""}
-            ${hasSomeRelations && blocksToEmit.includes("relationResolvers")
-              ? "...relationResolvers,"
-              : ""
+            ${
+              hasSomeRelations && blocksToEmit.includes("relationResolvers")
+                ? "...relationResolvers,"
+                : ""
             }
-            ] as unknown as NonEmptyArray<Function>`,
+            ] as Function[]`,
         },
       ],
     });
@@ -356,29 +354,49 @@ export function generateResolversIndexFile(
 
 export const generateModelsImports = createImportGenerator(modelsFolderName);
 export const generateEnumsImports = createImportGenerator(enumsFolderName);
-export const generateInputsImports = createImportGenerator(inputsFolderName);
+export const generateInputsImports = createImportGenerator(
+  inputsFolderName,
+  true, // Use barrel import for inputs to avoid circular dependency between individual files
+  false,
+);
 export const generateOutputsImports = createImportGenerator(outputsFolderName);
 // TODO: unify with generateOutputsImports
 export const generateResolversOutputsImports = createImportGenerator(
   `${resolversFolderName}/${outputsFolderName}`,
 );
 export const generateArgsImports = createImportGenerator(argsFolderName);
-function createImportGenerator(elementsDirName: string) {
+function createImportGenerator(
+  elementsDirName: string,
+  useIndexImport = false,
+  isTypeOnly = false,
+) {
   return (sourceFile: SourceFile, elementsNames: string[], level = 1) => {
     const distinctElementsNames = [...new Set(elementsNames)].sort();
-    for (const elementName of distinctElementsNames) {
+    if (useIndexImport && distinctElementsNames.length > 0) {
+      // Import all from the index file to avoid circular dependency issues
       sourceFile.addImportDeclaration({
         moduleSpecifier:
           (level === 0 ? "./" : "") +
-          path.posix.join(
-            ...Array(level).fill(".."),
-            elementsDirName,
-            elementName,
-          ),
-        // TODO: refactor to default exports
-        // defaultImport: elementName,
-        namedImports: [elementName],
+          path.posix.join(...Array(level).fill(".."), elementsDirName),
+        namedImports: distinctElementsNames,
+        isTypeOnly,
       });
+    } else {
+      for (const elementName of distinctElementsNames) {
+        sourceFile.addImportDeclaration({
+          moduleSpecifier:
+            (level === 0 ? "./" : "") +
+            path.posix.join(
+              ...Array(level).fill(".."),
+              elementsDirName,
+              elementName,
+            ),
+          // TODO: refactor to default exports
+          // defaultImport: elementName,
+          namedImports: [elementName],
+          isTypeOnly,
+        });
+      }
     }
   };
 }

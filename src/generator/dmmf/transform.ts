@@ -127,6 +127,7 @@ function transformModelField(dmmfDocument: DmmfDocument) {
       output: boolean;
       input: boolean | InputOmitSetting[];
     }>(field.documentation, "optional", "field");
+    // Cast to DMMF.ModelField to handle Prisma 7's ReadonlyDeep type differences
     return {
       ...field,
       type: field.type, // TS type check limitation
@@ -155,7 +156,7 @@ function transformModelField(dmmfDocument: DmmfDocument) {
           optionalInputFieldsByDefault?.includes(field.name) ??
           false,
       },
-    };
+    } as DMMF.ModelField;
   };
 }
 
@@ -200,15 +201,21 @@ function transformInputType(dmmfDocument: DmmfDocument) {
           const isOptional = !modelField?.isOptional.input
             ? false
             : typeof modelField.isOptional.input === "boolean"
-            ? modelField.isOptional.input
-            : (modelField.isOptional.input.includes(InputOmitSetting.Create) &&
-                inputType.name.includes("Create")) ||
-              (modelField.isOptional.input.includes(InputOmitSetting.Update) &&
-                inputType.name.includes("Update")) ||
-              (modelField.isOptional.input.includes(InputOmitSetting.Where) &&
-                inputType.name.includes("Where")) ||
-              (modelField.isOptional.input.includes(InputOmitSetting.OrderBy) &&
-                inputType.name.includes("OrderBy"));
+              ? modelField.isOptional.input
+              : (modelField.isOptional.input.includes(
+                  InputOmitSetting.Create,
+                ) &&
+                  inputType.name.includes("Create")) ||
+                (modelField.isOptional.input.includes(
+                  InputOmitSetting.Update,
+                ) &&
+                  inputType.name.includes("Update")) ||
+                (modelField.isOptional.input.includes(InputOmitSetting.Where) &&
+                  inputType.name.includes("Where")) ||
+                (modelField.isOptional.input.includes(
+                  InputOmitSetting.OrderBy,
+                ) &&
+                  inputType.name.includes("OrderBy"));
 
           const isOmitted = !modelField?.isOmitted.input
             ? false
@@ -570,7 +577,7 @@ function getPrismaMethodName(actionKind: DMMF.ModelAction) {
 const ENUM_SUFFIXES = ["OrderByRelevanceFieldEnum", "ScalarFieldEnum"] as const;
 export function transformEnums(dmmfDocument: DmmfDocument) {
   return (
-    enumDef: PrismaDMMF.DatamodelEnum | PrismaDMMF.SchemaEnum,
+    enumDef: PrismaDMMF.DatamodelEnum | PrismaDMMF.DatamodelSchemaEnum,
   ): DMMF.Enum => {
     let modelName: string | undefined = undefined;
     let typeName = enumDef.name;
@@ -581,9 +588,10 @@ export function transformEnums(dmmfDocument: DmmfDocument) {
       modelName = enumDef.name.replace(detectedSuffix, "");
       typeName = `${dmmfDocument.getModelTypeName(modelName)}${detectedSuffix}`;
     }
+    // In Prisma 7, DatamodelSchemaEnum has values: string[]
+    // DatamodelEnum has values: EnumValue[] where EnumValue = { name: string, dbName: string | null }
     const enumValues = enumDef.values as Array<
-      | PrismaDMMF.DatamodelEnum["values"][number]
-      | PrismaDMMF.SchemaEnum["values"][number]
+      string | { name: string; dbName?: string | null }
     >;
 
     return {

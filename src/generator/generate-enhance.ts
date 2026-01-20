@@ -25,8 +25,8 @@ export function generateEnhanceMap(
   const hasRelations = relationModels.length > 0;
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier: "type-graphql",
-    namedImports: ["ClassType"],
+    moduleSpecifier: "@nestjs/common",
+    namedImports: ["Type"],
   });
   sourceFile.addImportDeclaration({
     moduleSpecifier: "tslib",
@@ -352,7 +352,7 @@ export function generateEnhanceMap(
         TType extends object
       >(
         enhanceConfig: TEnhanceConfig,
-        typeClass: ClassType<TType>,
+        typeClass: Type<TType>,
         typePrototype: TType,
         typeFieldNames: string[]
       ) {

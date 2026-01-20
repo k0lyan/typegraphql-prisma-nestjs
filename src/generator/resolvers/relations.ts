@@ -157,7 +157,7 @@ export default function generateRelationsResolverClassesFromModel(
               {
                 name: rootArgName,
                 type: model.typeName,
-                decorators: [{ name: "Root", arguments: [] }],
+                decorators: [{ name: "Parent", arguments: [] }],
               },
               {
                 name: "ctx",
@@ -170,7 +170,7 @@ export default function generateRelationsResolverClassesFromModel(
                 type: "GraphQLResolveInfo",
                 decorators: [{ name: "Info", arguments: [] }],
               },
-              ...((!field.argsTypeName)
+              ...(!field.argsTypeName
                 ? []
                 : [
                     {
@@ -226,7 +226,7 @@ export default function generateRelationsResolverClassesFromModel(
             statements: [
               "(dataloader as any).info = info;",
               "(dataloader as any).context = ctx;",
-              (!field.argsTypeName)
+              !field.argsTypeName
                 ? "(dataloader as any).args = {};"
                 : "(dataloader as any).args = args;",
               field.isRequired
@@ -255,7 +255,7 @@ export default function generateRelationsResolverClassesFromModel(
             {
               name: rootArgName,
               type: model.typeName,
-              decorators: [{ name: "Root", arguments: [] }],
+              decorators: [{ name: "Parent", arguments: [] }],
             },
             {
               name: "ctx",

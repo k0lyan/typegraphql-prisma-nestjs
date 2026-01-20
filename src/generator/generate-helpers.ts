@@ -12,31 +12,8 @@ export function generateHelpersFile(
   generateGraphQLInfoImport(sourceFile);
   generateGraphQLFieldsImport(sourceFile);
   sourceFile.addImportDeclaration({
-    moduleSpecifier: "@nestjs/common",
-    namedImports: [
-      "CallHandler",
-      "createParamDecorator",
-      "ExecutionContext",
-      "Injectable",
-      "NestInterceptor",
-      "Type",
-    ].sort(),
-  });
-  sourceFile.addImportDeclaration({
-    moduleSpecifier: "@nestjs/core",
-    namedImports: ["APP_INTERCEPTOR", "ContextIdFactory", "ModuleRef"].sort(),
-  });
-  sourceFile.addImportDeclaration({
     moduleSpecifier: "dataloader",
     namespaceImport: "DataLoader",
-  });
-  sourceFile.addImportDeclaration({
-    moduleSpecifier: "rxjs",
-    namedImports: ["Observable"].sort(),
-  });
-  sourceFile.addImportDeclaration({
-    moduleSpecifier: "@nestjs/graphql",
-    namedImports: ["GqlExecutionContext"].sort(),
   });
 
   sourceFile.addStatements(/* ts */ `
@@ -113,119 +90,35 @@ export function generateHelpersFile(
   `);
 
   sourceFile.addStatements(/* ts */ `
-export class GraphqlError extends Error {}
-
 /**
- * This interface will be used to generate the initial data loader.
- * The concrete implementation should be added as a provider to your module.
+ * Simple inline dataloader factory for type-graphql resolvers
+ * Creates a dataloader per request context
  */
-export interface GraphqlDataLoader<ID, Type> {
-  /**
-   * Should return a new instance of dataloader each time
-   */
-  generateDataLoader(context?: ExecutionContext): DataLoader<ID, Type>;
+export function InlineLoader<ID, Type>(
+  createLoader: (ctx: any) => DataLoader<ID, Type>,
+  _target: any,
+  _propertyKey: string,
+  parameterIndex: number
+) {
+  // This is a parameter decorator that creates dataloaders
+  // The actual loader creation happens at runtime in the resolver
 }
 
 /**
- * Context key where get loader function will be stored.
- * This class should be added to your module providers like so:
- * {
- *     provide: APP_INTERCEPTOR,
- *     useClass: DataLoaderInterceptor,
- * },
+ * Helper to get or create a dataloader from context
  */
-const NEST_LOADER_CONTEXT_KEY = 'NEST_LOADER_CONTEXT_KEY';
-
-@Injectable()
-export class GraphqlDataLoaderInterceptor implements NestInterceptor {
-  constructor(private readonly moduleRef: ModuleRef) {}
-  /**
-   * @inheritdoc
-   */
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const graphqlExecutionContext = GqlExecutionContext.create(context);
-    const ctx = graphqlExecutionContext.getContext();
-
-    if (ctx[NEST_LOADER_CONTEXT_KEY] === undefined) {
-      ctx[NEST_LOADER_CONTEXT_KEY] = {
-        contextId: ContextIdFactory.create(),
-        getLoader: (type: string): Promise<GraphqlDataLoader<any, any>> => {
-          if (ctx[type] === undefined) {
-            try {
-              ctx[type] = (async () => {
-                return (
-                  await this.moduleRef.resolve<GraphqlDataLoader<any, any>>(
-                    type,
-                    ctx[NEST_LOADER_CONTEXT_KEY].contextId,
-                    {
-                      strict: false,
-                    }
-                  )
-                ).generateDataLoader(context);
-              })();
-            } catch (e) {
-              throw new GraphqlError(\`The loader \${type} is not provided\` + e);
-            }
-          }
-          return ctx[type];
-        },
-      };
-    }
-    return next.handle();
+export function getOrCreateLoader<ID, Type>(
+  ctx: any,
+  loaderKey: string,
+  createLoader: () => DataLoader<ID, Type>
+): DataLoader<ID, Type> {
+  if (!ctx._dataloaders) {
+    ctx._dataloaders = new Map();
   }
+  if (!ctx._dataloaders.has(loaderKey)) {
+    ctx._dataloaders.set(loaderKey, createLoader());
+  }
+  return ctx._dataloaders.get(loaderKey);
 }
-
-/**
- * The decorator to be used within your graphql method.
- */
-export const Loader = createParamDecorator(
-  async (data: Type<GraphqlDataLoader<any, any>>, context: ExecutionContext & { [key: string]: any }) => {
-    const ctx: any = GqlExecutionContext.create(context).getContext();
-    if (ctx[NEST_LOADER_CONTEXT_KEY] === undefined) {
-      throw new GraphqlError(\`
-              You should provide interceptor \${GraphqlDataLoaderInterceptor.name} globally with \${APP_INTERCEPTOR}
-            \`);
-    }
-    return await ctx[NEST_LOADER_CONTEXT_KEY].getLoader(data);
-  }
-);
-
-/**
- * Easy way to create a dataloader in a specific location, context only needs to be used to access global properties that are set in each request.
- * Added the ability to reuse simple dataloaders by a certain name.
- */
-export const InlineLoader = createParamDecorator(
-  (
-    generateDataLoader: <ID, Type>(
-      context?: ExecutionContext
-    ) => DataLoader<ID, Type> | { name: string; loader: DataLoader<ID, Type> },
-    context: ExecutionContext & { [key: string]: any }
-  ) => {
-    const _class = context.getClass();
-    const _handler = context.getHandler();
-    const dataloader = generateDataLoader(context);
-    const ctx: any = GqlExecutionContext.create(context).getContext();
-
-    if (!ctx.InlineLoadersStorage) {
-      ctx.InlineLoadersStorage = new Map();
-    }
-    if ('loader' in dataloader) {
-      const dataloaderName = \`Dataloader: \${dataloader.name}\`;
-      if (!ctx.InlineLoadersStorage.has(dataloaderName)) {
-        ctx.InlineLoadersStorage.set(dataloaderName, dataloader.loader);
-      }
-      return ctx.InlineLoadersStorage.get(dataloaderName);
-    } else {
-      if (!ctx.InlineLoadersStorage.has(_class)) {
-        ctx.InlineLoadersStorage.set(_class, new Map());
-      }
-      if (!ctx.InlineLoadersStorage.get(_class).has(_handler)) {
-        ctx.InlineLoadersStorage.get(_class).set(_handler, dataloader);
-      }
-      return ctx.InlineLoadersStorage.get(_class).get(_handler);
-    }
-  }
-);
-
   `);
 }

@@ -1,23 +1,24 @@
-import type { DMMF as PrismaDMMF } from "@prisma/generator-helper";
-import { DMMF } from "./types";
-import { parseDocumentationAttributes } from "./helpers";
 import {
-  getInputTypeName,
+  InputOmitSetting,
+  supportedMutationActions,
+  supportedQueryActions,
+} from "../config";
+import {
   camelCase,
+  cleanDocsString,
+  getFieldTSType,
+  getInputTypeName,
   getModelNameFromInputType,
   getTypeGraphQLType,
-  getFieldTSType,
   pascalCase,
-  cleanDocsString,
 } from "../helpers";
+
+import { DMMF } from "./types";
 import { DmmfDocument } from "./dmmf-document";
-import pluralize from "pluralize";
 import { GeneratorOptions } from "../options";
-import {
-  supportedQueryActions,
-  supportedMutationActions,
-  InputOmitSetting,
-} from "../config";
+import type { DMMF as PrismaDMMF } from "@prisma/generator-helper";
+import { parseDocumentationAttributes } from "./helpers";
+import pluralize from "pluralize";
 
 export function transformSchema(
   datamodel: PrismaDMMF.Schema,
@@ -586,7 +587,10 @@ export function transformEnums(dmmfDocument: DmmfDocument) {
     );
     if (detectedSuffix) {
       modelName = enumDef.name.replace(detectedSuffix, "");
-      typeName = `${dmmfDocument.getModelTypeName(modelName)}${detectedSuffix}`;
+      const modelTypeName = dmmfDocument.getModelTypeName(modelName);
+      if (modelTypeName) {
+        typeName = `${modelTypeName}${detectedSuffix}`;
+      }
     }
     // In Prisma 7, DatamodelSchemaEnum has values: string[]
     // DatamodelEnum has values: EnumValue[] where EnumValue = { name: string, dbName: string | null }

@@ -2,7 +2,7 @@
   "name": "@k0lyan/typegraphql-prisma-nestjs",
   "version": "0.28.22",
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "npm run build || true",
     "build": "tsc",
     "package:build": "./package.sh",
     "package:publish": "cd package *&& npm publish",
@@ -83,10 +83,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/EndyKaufman/typegraphql-prisma-nestjs.git"
+    "url": "https://github.com/k0lyan/typegraphql-prisma-nestjs.git"
   },
   "bugs": {
-    "url": "https://github.com/EndyKaufman/typegraphql-prisma-nestjs/issues"
+    "url": "https://github.com/k0lyan/typegraphql-prisma-nestjs/issues"
   },
   "keywords": [
     "nestjs",

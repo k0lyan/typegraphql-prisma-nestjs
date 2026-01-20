@@ -2,7 +2,7 @@
   "name": "typegraphql-prisma-nestjs",
   "version": "0.28.19",
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "npm run build || true",
     "build": "tsc",
     "package:build": "./package.sh",
     "package:publish": "cd package *&& npm publish",

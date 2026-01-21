@@ -4,7 +4,7 @@ sidebar_position: 1
 ---
 
 :::info
-Be aware that due to usage of some ES2021 and newer Node.js features, you also have to use **Node.js v16.13.0 or newer**.
+Be aware that due to usage of some ES2021 and newer Node.js features, you also have to use **Node.js v18.x or newer** for version 1.x (Prisma 7), or **Node.js v16.13.0 or newer** for version 0.x (Prisma 6).
 :::
 
 ### TypeGraphQL
@@ -18,24 +18,35 @@ https://typegraphql.com/docs/installation.html
 After that, you have to install the generator, as a dev dependency:
 
 ```sh
-npm i -D typegraphql-prisma
+# For Prisma 7.x (recommended)
+npm i -D typegraphql-prisma-nestjs@^1.0.0
+
+# For Prisma 6.x (legacy)
+npm i -D typegraphql-prisma-nestjs@^0.28.0
 ```
 
-Furthermore, `typegraphql-prisma` requires Prisma to work properly, so please install Prisma dependencies if you don't have it already installed:
+Furthermore, `typegraphql-prisma-nestjs` requires Prisma to work properly, so please install Prisma dependencies if you don't have it already installed:
 
 ```sh
-npm i -D prisma
-npm i @prisma/client
+# For Prisma 7.x
+npm i -D prisma@^7.0.0
+npm i @prisma/client@^7.0.0
+
+# For Prisma 6.x
+npm i -D prisma@^6.0.0
+npm i @prisma/client@^6.0.0
 ```
 
 :::caution
-Be aware that `typegraphql-prisma` is designed to work with a selected versions of Prisma.
-This generator is designed to work and tested with the features of the `5.0.0` release.
+Be aware that `typegraphql-prisma-nestjs` is designed to work with specific versions of Prisma:
 
-You can update both `prisma` and `@prisma/client` to a newer version, matching `^5.0.0`, like `5.4.2`, in order to receive important bugfixes.
-However, make sure you don't use the new features from a newer Prisma version, especially the ones behind a preview flag.
+| Generator Version | Prisma Version |
+|-------------------|----------------|
+| `1.x` | Prisma `^7.0.0` |
+| `0.x` | Prisma `^6.0.0` |
 
-If you encounter a new Prisma feature not supported yet, please check on GitHub issues and create a new issue, if that wasn't already reported, and downgrade the Prisma version, if needed.
+Make sure you install the correct generator version for your Prisma version.
+If you encounter issues with a new Prisma feature not supported yet, please check on GitHub issues and create a new issue if that wasn't already reported.
 
 :::
 

@@ -3,14 +3,36 @@ title: Nest JS
 sidebar_position: 5
 ---
 
-## `typegraphql-nestjs`
+## NestJS GraphQL Integration
 
-In order to use generated types and resolvers classes in NestJS, you need to use the [official `typegraphql-nestjs` package](https://github.com/MichalLytek/typegraphql-nestjs).
+`typegraphql-prisma-nestjs` generates code that uses `@nestjs/graphql` decorators directly, making it fully compatible with NestJS GraphQL applications.
 
-This module allows for basic integration of TypeGraphQL with NestJS, so you can use the generated TypeGraphQL classes to create a GraphQL API in NestJS.
+The generated resolvers and types can be used directly with `@nestjs/graphql` without any additional adapters.
 
-You can find an example in the [`examples/4-nest-js` folder](https://github.com/MichalLytek/typegraphql-prisma/tree/main/examples/4-nest-js).
+### Installation
 
-:::caution
-Due to difference between TypeGraphQL and NestJS decorators, `typegraphql-prisma` doesn't work anymore with `@nestjs/graphql` from version 7.0.
-:::
+```sh
+npm i @nestjs/graphql @nestjs/apollo @apollo/server graphql
+```
+
+### Usage
+
+```typescript
+import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { resolvers } from '@generated/type-graphql';
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: true,
+    }),
+  ],
+  providers: [...resolvers],
+})
+export class AppModule {}
+```
+
+You can find an example in the [`examples/4-nest-js` folder](https://github.com/EndyKaufman/typegraphql-prisma-nestjs/tree/main/examples/4-nest-js).

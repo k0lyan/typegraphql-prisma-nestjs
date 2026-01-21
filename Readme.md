@@ -6,9 +6,20 @@ Long term support is not guaranteed, use of this copy is at your own risk.
 
 ## Installation
 
+```sh
+# For Prisma 7.x (recommended)
+npm install typegraphql-prisma-nestjs@^1.0.0 --save-dev
+
+# For Prisma 6.x (legacy)
+npm install typegraphql-prisma-nestjs@^0.28.0 --save-dev
 ```
-npm install typegraphql-prisma-nestjs --save-dev
-```
+
+## Version Compatibility
+
+| Generator Version | Prisma Version | Node.js |
+|-------------------|----------------|----------|
+| `1.x` | Prisma 7.x | >= 18.x |
+| `0.x` | Prisma 6.x | >= 16.x |
 
 ## Differences from the original project:
 
@@ -112,7 +123,7 @@ https://github.com/EndyKaufman/typegraphql-prisma-nestjs-example
 
 ## Feedback
 
-Currently released version `0.x` is just a preview of the upcoming integration. For now it lacks some customization option - picking models or fields of object types to expose in the schema, hiding input fields as well as picking exposed args fields. However, the base functionality is working well, so I strongly encourage you to give it a try and play with it.
+Version `1.x` supports Prisma 7.x with the latest features, while version `0.x` maintains compatibility with Prisma 6.x. The base functionality is working well, so I strongly encourage you to give it a try and play with it.
 
 Any feedback about the developers experience or ideas about new features or enhancements are very welcome - please feel free to put your two cents by using the [GitHub Discussions feature](https://github.com/MichalLytek/typegraphql-prisma/discussions/new):
 

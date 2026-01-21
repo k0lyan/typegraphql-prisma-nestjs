@@ -110,7 +110,7 @@ export default function generateObjectTypeClassFromModel(
                   {
                     name: "Field",
                     arguments: [
-                      `_type => ${field.typeGraphQLType}`,
+                      `() => ${field.typeGraphQLType}`,
                       Writers.object({
                         nullable: `${!!field.isOptional.output || isOptional}`,
                         ...(field.docs && { description: `"${field.docs}"` }),
@@ -136,7 +136,7 @@ export default function generateObjectTypeClassFromModel(
                 {
                   name: "Field",
                   arguments: [
-                    `_type => ${countField.typeGraphQLType}`,
+                    `() => ${countField.typeGraphQLType}`,
                     Writers.object({
                       nullable: `${!countField.isRequired}`,
                     }),
@@ -163,7 +163,7 @@ export default function generateObjectTypeClassFromModel(
             {
               name: "Field",
               arguments: [
-                `_type => ${field.typeGraphQLType}`,
+                `() => ${field.typeGraphQLType}`,
                 Writers.object({
                   nullable: `${!field.isRequired}`,
                   ...(field.docs && { description: `"${field.docs}"` }),

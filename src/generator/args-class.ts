@@ -69,7 +69,7 @@ export default function generateArgsTypeClassFromArgs(
           {
             name: "Field",
             arguments: [
-              `_type => ${arg.typeGraphQLType}`,
+              `() => ${arg.typeGraphQLType}`,
               Writers.object({
                 nullable: `${!arg.isRequired}`,
               }),

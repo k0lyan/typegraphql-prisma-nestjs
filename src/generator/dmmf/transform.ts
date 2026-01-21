@@ -578,7 +578,7 @@ function getPrismaMethodName(actionKind: DMMF.ModelAction) {
 const ENUM_SUFFIXES = ["OrderByRelevanceFieldEnum", "ScalarFieldEnum"] as const;
 export function transformEnums(dmmfDocument: DmmfDocument) {
   return (
-    enumDef: PrismaDMMF.DatamodelEnum | PrismaDMMF.DatamodelSchemaEnum,
+    enumDef: PrismaDMMF.DatamodelEnum | PrismaDMMF.SchemaEnum,
   ): DMMF.Enum => {
     let modelName: string | undefined = undefined;
     let typeName = enumDef.name;
@@ -587,12 +587,14 @@ export function transformEnums(dmmfDocument: DmmfDocument) {
     );
     if (detectedSuffix) {
       modelName = enumDef.name.replace(detectedSuffix, "");
-      const modelTypeName = dmmfDocument.getModelTypeName(modelName);
+      const modelTypeName = modelName
+        ? dmmfDocument.getModelTypeName(modelName)
+        : undefined;
       if (modelTypeName) {
         typeName = `${modelTypeName}${detectedSuffix}`;
       }
     }
-    // In Prisma 7, DatamodelSchemaEnum has values: string[]
+    // In Prisma 6, SchemaEnum has values: string[]
     // DatamodelEnum has values: EnumValue[] where EnumValue = { name: string, dbName: string | null }
     const enumValues = enumDef.values as Array<
       string | { name: string; dbName?: string | null }

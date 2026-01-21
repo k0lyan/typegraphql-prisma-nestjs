@@ -78,7 +78,7 @@ export default function generateRelationsResolverClassesFromModel(
     decorators: [
       {
         name: "Resolver",
-        arguments: [`_of => ${model.typeName}`],
+        arguments: [`() => ${model.typeName}`],
       },
     ],
     methods: relationFields.map<OptionalKind<MethodDeclarationStructure>>(
@@ -145,7 +145,7 @@ export default function generateRelationsResolverClassesFromModel(
               {
                 name: "ResolveField",
                 arguments: [
-                  `_type => ${field.typeGraphQLType}`,
+                  `() => ${field.typeGraphQLType}`,
                   Writers.object({
                     nullable: `true`,
                     ...(field.docs && { description: `"${field.docs}"` }),
@@ -180,7 +180,7 @@ export default function generateRelationsResolverClassesFromModel(
                         {
                           name: "Args",
                           arguments: generatorOptions.emitRedundantTypesInfo
-                            ? [`_type => ${field.argsTypeName}`]
+                            ? [`() => ${field.argsTypeName}`]
                             : [],
                         },
                       ],
@@ -243,7 +243,7 @@ export default function generateRelationsResolverClassesFromModel(
             {
               name: "ResolveField",
               arguments: [
-                `_type => ${field.typeGraphQLType}`,
+                `() => ${field.typeGraphQLType}`,
                 Writers.object({
                   nullable: `${!field.isRequired}`,
                   ...(field.docs && { description: `"${field.docs}"` }),
@@ -278,7 +278,7 @@ export default function generateRelationsResolverClassesFromModel(
                       {
                         name: "Args",
                         arguments: generatorOptions.emitRedundantTypesInfo
-                          ? [`_type => ${field.argsTypeName}`]
+                          ? [`() => ${field.argsTypeName}`]
                           : [],
                       },
                     ],

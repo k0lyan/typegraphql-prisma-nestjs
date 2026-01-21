@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { promises as fs } from "fs";
-import { buildSchema } from "type-graphql";
+import { printSchema } from "graphql";
+import { buildNestSchema, resetForNewSchema } from "../helpers/build-schema";
 
 import generateArtifactsDirPath from "../helpers/artifacts-dir";
 import { generateCodeFromSchema } from "../helpers/generate-code";
@@ -9,6 +10,7 @@ describe("picking prisma actions", () => {
   let outputDirPath: string;
 
   beforeEach(async () => {
+    resetForNewSchema();
     outputDirPath = generateArtifactsDirPath("functional-picking-actions");
     await fs.mkdir(outputDirPath, { recursive: true });
     const prismaSchema = /* prisma */ `
@@ -26,15 +28,11 @@ describe("picking prisma actions", () => {
     const { CreateOneUserResolver, FindManyUserResolver } = require(
       outputDirPath + "/index",
     );
-    await buildSchema({
-      resolvers: [CreateOneUserResolver, FindManyUserResolver],
-      validate: false,
-      emitSchemaFile: outputDirPath + "/schema.graphql",
-    });
-    const graphQLSchemaSDL = await fs.readFile(
-      outputDirPath + "/schema.graphql",
-      { encoding: "utf8" },
-    );
+    const schema = await buildNestSchema([
+      CreateOneUserResolver,
+      FindManyUserResolver,
+    ]);
+    const graphQLSchemaSDL = printSchema(schema);
 
     expect(graphQLSchemaSDL).toMatchSnapshot("graphQLSchemaSDL");
   }, 60000);

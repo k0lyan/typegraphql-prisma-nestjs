@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`resolvers enhance should emit emit enhance file properly: enhance 1`] = `
-"import { ClassType } from \\"type-graphql\\";
+"import { Type } from \\"@nestjs/common\\";
 import * as tslib from \\"tslib\\";
 import * as crudResolvers from \\"./resolvers/crud/resolvers-crud.index\\";
 import * as argsTypes from \\"./resolvers/crud/args.index\\";
@@ -62,7 +62,7 @@ const argsInfo = {
   CreateManyClientArgs: [\\"data\\", \\"skipDuplicates\\"],
   CreateManyAndReturnClientArgs: [\\"data\\", \\"skipDuplicates\\"],
   CreateOneClientArgs: [\\"data\\"],
-  DeleteManyClientArgs: [\\"where\\"],
+  DeleteManyClientArgs: [\\"where\\", \\"limit\\"],
   DeleteOneClientArgs: [\\"where\\"],
   FindFirstClientArgs: [\\"where\\", \\"orderBy\\", \\"cursor\\", \\"take\\", \\"skip\\", \\"distinct\\"],
   FindFirstClientOrThrowArgs: [\\"where\\", \\"orderBy\\", \\"cursor\\", \\"take\\", \\"skip\\", \\"distinct\\"],
@@ -70,14 +70,14 @@ const argsInfo = {
   FindUniqueClientArgs: [\\"where\\"],
   FindUniqueClientOrThrowArgs: [\\"where\\"],
   GroupByClientArgs: [\\"where\\", \\"orderBy\\", \\"by\\", \\"having\\", \\"take\\", \\"skip\\"],
-  UpdateManyClientArgs: [\\"data\\", \\"where\\"],
+  UpdateManyClientArgs: [\\"data\\", \\"where\\", \\"limit\\"],
   UpdateOneClientArgs: [\\"data\\", \\"where\\"],
   UpsertOneClientArgs: [\\"where\\", \\"create\\", \\"update\\"],
   AggregatePostArgs: [\\"where\\", \\"orderBy\\", \\"cursor\\", \\"take\\", \\"skip\\"],
   CreateManyPostArgs: [\\"data\\", \\"skipDuplicates\\"],
   CreateManyAndReturnPostArgs: [\\"data\\", \\"skipDuplicates\\"],
   CreateOnePostArgs: [\\"data\\"],
-  DeleteManyPostArgs: [\\"where\\"],
+  DeleteManyPostArgs: [\\"where\\", \\"limit\\"],
   DeleteOnePostArgs: [\\"where\\"],
   FindFirstPostArgs: [\\"where\\", \\"orderBy\\", \\"cursor\\", \\"take\\", \\"skip\\", \\"distinct\\"],
   FindFirstPostOrThrowArgs: [\\"where\\", \\"orderBy\\", \\"cursor\\", \\"take\\", \\"skip\\", \\"distinct\\"],
@@ -85,7 +85,7 @@ const argsInfo = {
   FindUniquePostArgs: [\\"where\\"],
   FindUniquePostOrThrowArgs: [\\"where\\"],
   GroupByPostArgs: [\\"where\\", \\"orderBy\\", \\"by\\", \\"having\\", \\"take\\", \\"skip\\"],
-  UpdateManyPostArgs: [\\"data\\", \\"where\\"],
+  UpdateManyPostArgs: [\\"data\\", \\"where\\", \\"limit\\"],
   UpdateOnePostArgs: [\\"data\\", \\"where\\"],
   UpsertOnePostArgs: [\\"where\\", \\"create\\", \\"update\\"]
 };
@@ -247,7 +247,7 @@ function applyTypeClassEnhanceConfig<
   TType extends object
 >(
   enhanceConfig: TEnhanceConfig,
-  typeClass: ClassType<TType>,
+  typeClass: Type<TType>,
   typePrototype: TType,
   typeFieldNames: string[]
 ) {
@@ -271,7 +271,7 @@ function applyTypeClassEnhanceConfig<
   }
 }
 
-const modelsInfo = {
+export const modelsInfo = {
   Client: [\\"id\\", \\"email\\"],
   Post: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"]
 };
@@ -329,7 +329,9 @@ const outputsInfo = {
   PostMinAggregate: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\"],
   PostMaxAggregate: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\"],
   CreateManyAndReturnClient: [\\"id\\", \\"email\\"],
-  CreateManyAndReturnPost: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"]
+  UpdateManyUserAndReturnOutputType: [\\"id\\", \\"email\\"],
+  CreateManyAndReturnPost: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"],
+  UpdateManyPostAndReturnOutputType: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\", \\"author\\"]
 };
 
 type OutputTypesNames = keyof typeof outputTypes;
@@ -402,8 +404,8 @@ const inputsInfo = {
   DateTimeFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
   BoolFilter: [\\"equals\\", \\"not\\"],
   StringNullableFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"contains\\", \\"startsWith\\", \\"endsWith\\", \\"mode\\", \\"not\\"],
-  JsonFilter: [\\"equals\\", \\"path\\", \\"string_contains\\", \\"string_starts_with\\", \\"string_ends_with\\", \\"array_contains\\", \\"array_starts_with\\", \\"array_ends_with\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
-  ClientRelationFilter: [\\"is\\", \\"isNot\\"],
+  JsonFilter: [\\"equals\\", \\"path\\", \\"mode\\", \\"string_contains\\", \\"string_starts_with\\", \\"string_ends_with\\", \\"array_starts_with\\", \\"array_ends_with\\", \\"array_contains\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
+  UserScalarRelationFilter: [\\"is\\", \\"isNot\\"],
   SortOrderInput: [\\"sort\\", \\"nulls\\"],
   PostCountOrderByAggregateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"authorId\\", \\"metadata\\"],
   PostAvgOrderByAggregateInput: [\\"authorId\\"],
@@ -413,7 +415,7 @@ const inputsInfo = {
   DateTimeWithAggregatesFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\", \\"_count\\", \\"_min\\", \\"_max\\"],
   BoolWithAggregatesFilter: [\\"equals\\", \\"not\\", \\"_count\\", \\"_min\\", \\"_max\\"],
   StringNullableWithAggregatesFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"contains\\", \\"startsWith\\", \\"endsWith\\", \\"mode\\", \\"not\\", \\"_count\\", \\"_min\\", \\"_max\\"],
-  JsonWithAggregatesFilter: [\\"equals\\", \\"path\\", \\"string_contains\\", \\"string_starts_with\\", \\"string_ends_with\\", \\"array_contains\\", \\"array_starts_with\\", \\"array_ends_with\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\", \\"_count\\", \\"_min\\", \\"_max\\"],
+  JsonWithAggregatesFilter: [\\"equals\\", \\"path\\", \\"mode\\", \\"string_contains\\", \\"string_starts_with\\", \\"string_ends_with\\", \\"array_starts_with\\", \\"array_ends_with\\", \\"array_contains\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\", \\"_count\\", \\"_min\\", \\"_max\\"],
   PostCreateNestedManyWithoutAuthorInput: [\\"create\\", \\"connectOrCreate\\", \\"createMany\\", \\"connect\\"],
   StringFieldUpdateOperationsInput: [\\"set\\"],
   PostUpdateManyWithoutAuthorNestedInput: [\\"create\\", \\"connectOrCreate\\", \\"upsert\\", \\"createMany\\", \\"set\\", \\"disconnect\\", \\"delete\\", \\"connect\\", \\"update\\", \\"updateMany\\", \\"deleteMany\\"],
@@ -435,7 +437,7 @@ const inputsInfo = {
   NestedBoolWithAggregatesFilter: [\\"equals\\", \\"not\\", \\"_count\\", \\"_min\\", \\"_max\\"],
   NestedStringNullableWithAggregatesFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"contains\\", \\"startsWith\\", \\"endsWith\\", \\"not\\", \\"_count\\", \\"_min\\", \\"_max\\"],
   NestedIntNullableFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
-  NestedJsonFilter: [\\"equals\\", \\"path\\", \\"string_contains\\", \\"string_starts_with\\", \\"string_ends_with\\", \\"array_contains\\", \\"array_starts_with\\", \\"array_ends_with\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
+  NestedJsonFilter: [\\"equals\\", \\"path\\", \\"mode\\", \\"string_contains\\", \\"string_starts_with\\", \\"string_ends_with\\", \\"array_starts_with\\", \\"array_ends_with\\", \\"array_contains\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
   PostCreateWithoutAuthorInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"],
   PostCreateOrConnectWithoutAuthorInput: [\\"where\\", \\"create\\"],
   PostCreateManyAuthorInputEnvelope: [\\"data\\", \\"skipDuplicates\\"],
@@ -495,17 +497,16 @@ export function applyInputTypesEnhanceMap(
 exports[`resolvers enhance should emit emit enhance file properly: mainIndex 1`] = `
 "import * as crudResolversImport from \\"./resolvers/crud/resolvers-crud.index\\";
 import * as relationResolversImport from \\"./resolvers/relations/resolvers.index\\";
-import { NonEmptyArray } from \\"type-graphql\\";
 
 export * from \\"./enums\\";
 export * from \\"./models\\";
 export * from \\"./resolvers/crud\\";
 
-export const crudResolvers = Object.values(crudResolversImport) as unknown as NonEmptyArray<Function>;
+export const crudResolvers = Object.values(crudResolversImport) as Function[];
 
 export * from \\"./resolvers/relations\\";
 
-export const relationResolvers = Object.values(relationResolversImport) as unknown as NonEmptyArray<Function>;
+export const relationResolvers = Object.values(relationResolversImport) as Function[];
 
 export * from \\"./resolvers/inputs\\";
 export * from \\"./resolvers/outputs\\";
@@ -515,12 +516,12 @@ export * from \\"./scalars\\";
 export const resolvers = [
   ...crudResolvers,
   ...relationResolvers,
-] as unknown as NonEmptyArray<Function>;
+] as Function[];
 "
 `;
 
 exports[`resolvers enhance should emit enhance file properly even in model has no relations: enhance 1`] = `
-"import { ClassType } from \\"type-graphql\\";
+"import { Type } from \\"@nestjs/common\\";
 import * as tslib from \\"tslib\\";
 import * as crudResolvers from \\"./resolvers/crud/resolvers-crud.index\\";
 import * as argsTypes from \\"./resolvers/crud/args.index\\";
@@ -561,7 +562,7 @@ const argsInfo = {
   CreateManyPostArgs: [\\"data\\", \\"skipDuplicates\\"],
   CreateManyAndReturnPostArgs: [\\"data\\", \\"skipDuplicates\\"],
   CreateOnePostArgs: [\\"data\\"],
-  DeleteManyPostArgs: [\\"where\\"],
+  DeleteManyPostArgs: [\\"where\\", \\"limit\\"],
   DeleteOnePostArgs: [\\"where\\"],
   FindFirstPostArgs: [\\"where\\", \\"orderBy\\", \\"cursor\\", \\"take\\", \\"skip\\", \\"distinct\\"],
   FindFirstPostOrThrowArgs: [\\"where\\", \\"orderBy\\", \\"cursor\\", \\"take\\", \\"skip\\", \\"distinct\\"],
@@ -569,7 +570,7 @@ const argsInfo = {
   FindUniquePostArgs: [\\"where\\"],
   FindUniquePostOrThrowArgs: [\\"where\\"],
   GroupByPostArgs: [\\"where\\", \\"orderBy\\", \\"by\\", \\"having\\", \\"take\\", \\"skip\\"],
-  UpdateManyPostArgs: [\\"data\\", \\"where\\"],
+  UpdateManyPostArgs: [\\"data\\", \\"where\\", \\"limit\\"],
   UpdateOnePostArgs: [\\"data\\", \\"where\\"],
   UpsertOnePostArgs: [\\"where\\", \\"create\\", \\"update\\"]
 };
@@ -684,7 +685,7 @@ function applyTypeClassEnhanceConfig<
   TType extends object
 >(
   enhanceConfig: TEnhanceConfig,
-  typeClass: ClassType<TType>,
+  typeClass: Type<TType>,
   typePrototype: TType,
   typeFieldNames: string[]
 ) {
@@ -708,7 +709,7 @@ function applyTypeClassEnhanceConfig<
   }
 }
 
-const modelsInfo = {
+export const modelsInfo = {
   Post: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"]
 };
 
@@ -754,7 +755,8 @@ const outputsInfo = {
   PostCountAggregate: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\", \\"_all\\"],
   PostMinAggregate: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\"],
   PostMaxAggregate: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\"],
-  CreateManyAndReturnPost: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"]
+  CreateManyAndReturnPost: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"],
+  UpdateManyPostAndReturnOutputType: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"]
 };
 
 type OutputTypesNames = keyof typeof outputTypes;
@@ -808,7 +810,7 @@ const inputsInfo = {
   DateTimeFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
   BoolFilter: [\\"equals\\", \\"not\\"],
   StringNullableFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"contains\\", \\"startsWith\\", \\"endsWith\\", \\"mode\\", \\"not\\"],
-  JsonFilter: [\\"equals\\", \\"path\\", \\"string_contains\\", \\"string_starts_with\\", \\"string_ends_with\\", \\"array_contains\\", \\"array_starts_with\\", \\"array_ends_with\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
+  JsonFilter: [\\"equals\\", \\"path\\", \\"mode\\", \\"string_contains\\", \\"string_starts_with\\", \\"string_ends_with\\", \\"array_starts_with\\", \\"array_ends_with\\", \\"array_contains\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
   SortOrderInput: [\\"sort\\", \\"nulls\\"],
   PostCountOrderByAggregateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\", \\"metadata\\"],
   PostMaxOrderByAggregateInput: [\\"uuid\\", \\"createdAt\\", \\"updatedAt\\", \\"published\\", \\"title\\", \\"content\\"],
@@ -817,7 +819,7 @@ const inputsInfo = {
   DateTimeWithAggregatesFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\", \\"_count\\", \\"_min\\", \\"_max\\"],
   BoolWithAggregatesFilter: [\\"equals\\", \\"not\\", \\"_count\\", \\"_min\\", \\"_max\\"],
   StringNullableWithAggregatesFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"contains\\", \\"startsWith\\", \\"endsWith\\", \\"mode\\", \\"not\\", \\"_count\\", \\"_min\\", \\"_max\\"],
-  JsonWithAggregatesFilter: [\\"equals\\", \\"path\\", \\"string_contains\\", \\"string_starts_with\\", \\"string_ends_with\\", \\"array_contains\\", \\"array_starts_with\\", \\"array_ends_with\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\", \\"_count\\", \\"_min\\", \\"_max\\"],
+  JsonWithAggregatesFilter: [\\"equals\\", \\"path\\", \\"mode\\", \\"string_contains\\", \\"string_starts_with\\", \\"string_ends_with\\", \\"array_starts_with\\", \\"array_ends_with\\", \\"array_contains\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\", \\"_count\\", \\"_min\\", \\"_max\\"],
   StringFieldUpdateOperationsInput: [\\"set\\"],
   DateTimeFieldUpdateOperationsInput: [\\"set\\"],
   BoolFieldUpdateOperationsInput: [\\"set\\"],
@@ -832,7 +834,7 @@ const inputsInfo = {
   NestedBoolWithAggregatesFilter: [\\"equals\\", \\"not\\", \\"_count\\", \\"_min\\", \\"_max\\"],
   NestedStringNullableWithAggregatesFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"contains\\", \\"startsWith\\", \\"endsWith\\", \\"not\\", \\"_count\\", \\"_min\\", \\"_max\\"],
   NestedIntNullableFilter: [\\"equals\\", \\"in\\", \\"notIn\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"],
-  NestedJsonFilter: [\\"equals\\", \\"path\\", \\"string_contains\\", \\"string_starts_with\\", \\"string_ends_with\\", \\"array_contains\\", \\"array_starts_with\\", \\"array_ends_with\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"]
+  NestedJsonFilter: [\\"equals\\", \\"path\\", \\"mode\\", \\"string_contains\\", \\"string_starts_with\\", \\"string_ends_with\\", \\"array_starts_with\\", \\"array_ends_with\\", \\"array_contains\\", \\"lt\\", \\"lte\\", \\"gt\\", \\"gte\\", \\"not\\"]
 };
 
 type InputTypesNames = keyof typeof inputTypes;

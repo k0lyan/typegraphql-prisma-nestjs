@@ -63,7 +63,7 @@ export default function generateActionResolverClass(
     decorators: [
       {
         name: "Resolver",
-        arguments: [`_of => ${model.typeName}`],
+        arguments: [`() => ${model.typeName}`],
       },
     ],
     methods: [

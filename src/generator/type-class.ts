@@ -109,7 +109,7 @@ export function generateOutputTypeClassFromType(
             {
               name: "Field",
               arguments: [
-                `_type => ${field.typeGraphQLType}`,
+                `() => ${field.typeGraphQLType}`,
                 Writers.object({
                   nullable: `${!field.isRequired}`,
                 }),
@@ -136,7 +136,7 @@ export function generateOutputTypeClassFromType(
           {
             name: "Field",
             arguments: [
-              `_type => ${field.typeGraphQLType}`,
+              `() => ${field.typeGraphQLType}`,
               Writers.object({
                 name: `"${field.name}"`,
                 nullable: `${!field.isRequired}`,

@@ -1,19 +1,19 @@
-import { Project } from "ts-morph";
-import path from "path";
-
-import { resolversFolderName, crudResolversFolderName } from "../config";
+import { crudResolversFolderName, resolversFolderName } from "../config";
 import {
-  generateTypeGraphQLImport,
   generateArgsImports,
-  generateModelsImports,
-  generateOutputsImports,
   generateGraphQLInfoImport,
   generateHelpersFileImport,
+  generateModelsImports,
+  generateOutputsImports,
+  generateTypeGraphQLImport,
 } from "../imports";
-import { generateCrudResolverClassMethodDeclaration } from "./helpers";
-import { DmmfDocument } from "../dmmf/dmmf-document";
+
 import { DMMF } from "../dmmf/types";
+import { DmmfDocument } from "../dmmf/dmmf-document";
 import { GeneratorOptions } from "../options";
+import { Project } from "ts-morph";
+import { generateCrudResolverClassMethodDeclaration } from "./helpers";
+import path from "path";
 
 export default function generateActionResolverClass(
   project: Project,

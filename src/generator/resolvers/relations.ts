@@ -1,23 +1,23 @@
 import {
-  OptionalKind,
   MethodDeclarationStructure,
+  OptionalKind,
   Project,
   Writers,
 } from "ts-morph";
-import path from "path";
-
-import { camelCase } from "../helpers";
-import { resolversFolderName, relationsResolversFolderName } from "../config";
 import {
-  generateTypeGraphQLImport,
   generateArgsImports,
-  generateModelsImports,
-  generateHelpersFileImport,
   generateGraphQLInfoImport,
+  generateHelpersFileImport,
+  generateModelsImports,
+  generateTypeGraphQLImport,
 } from "../imports";
-import { DmmfDocument } from "../dmmf/dmmf-document";
+import { relationsResolversFolderName, resolversFolderName } from "../config";
+
 import { DMMF } from "../dmmf/types";
+import { DmmfDocument } from "../dmmf/dmmf-document";
 import { GeneratorOptions } from "../options";
+import { camelCase } from "../helpers";
+import path from "path";
 
 export default function generateRelationsResolverClassesFromModel(
   project: Project,
@@ -193,7 +193,7 @@ export default function generateRelationsResolverClassesFromModel(
                   {
                     name: "InlineLoader",
                     arguments: [
-                      `<ID,Type>(context)=>{    
+                      `<ID,Type>(context)=>{
               const graphqlExecutionContext = GqlExecutionContext.create(context);
               const ctx = graphqlExecutionContext.getContext();
               const loader = new DataLoader<ID,Type>(

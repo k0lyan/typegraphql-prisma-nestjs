@@ -1,6 +1,6 @@
 {
   "name": "@k0lyan/typegraphql-prisma-nestjs",
-  "version": "0.28.22",
+  "version": "1.0.1",
   "scripts": {
     "prepare": "npm run build || true",
     "build": "tsc",

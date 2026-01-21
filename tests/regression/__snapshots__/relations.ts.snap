@@ -1,27 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`relations resolvers generation should not emit relation resolver when relation field is ignored: UserRelationsResolver 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Point } from \\"../../../models/Point\\";
 import { User } from \\"../../../models/User\\";
 import { UserPointsArgs } from \\"./args/UserPointsArgs\\";
-import { transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import * as DataLoader from \\"dataloader\\";
 
-@TypeGraphQL.Resolver(_of => User)
+@Resolver((_of: any) => User)
 export class UserRelationsResolver {
-  @TypeGraphQL.FieldResolver(_type => [Point], {
+  @ResolveField((_type: any) => [Point], {
     nullable: false
   })
-  async points(@TypeGraphQL.Root() user: User, @TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args() args: UserPointsArgs): Promise<Point[]> {
-    const { _count } = transformInfoIntoPrismaArgs(info);
+  async points(@Parent() user: User, @Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: UserPointsArgs): Promise<Point[]> {
+    const { _count } = transformInfoIntoPrismaArgs(info, 'User', '', '');
     return getPrismaFromContext(ctx).user.findUniqueOrThrow({
       where: {
         id: user.id,
       },
     }).points({
       ...args,
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count, 'User', '', '')),
     });
   }
 }
@@ -42,17 +43,16 @@ export * from \\"./args.index\\";
 exports[`relations resolvers generation should not emit relation resolver when relation field is ignored: mainIndex 1`] = `
 "import * as crudResolversImport from \\"./resolvers/crud/resolvers-crud.index\\";
 import * as relationResolversImport from \\"./resolvers/relations/resolvers.index\\";
-import { NonEmptyArray } from \\"type-graphql\\";
 
 export * from \\"./enums\\";
 export * from \\"./models\\";
 export * from \\"./resolvers/crud\\";
 
-export const crudResolvers = Object.values(crudResolversImport) as unknown as NonEmptyArray<Function>;
+export const crudResolvers = Object.values(crudResolversImport) as Function[];
 
 export * from \\"./resolvers/relations\\";
 
-export const relationResolvers = Object.values(relationResolversImport) as unknown as NonEmptyArray<Function>;
+export const relationResolvers = Object.values(relationResolversImport) as Function[];
 
 export * from \\"./resolvers/inputs\\";
 export * from \\"./resolvers/outputs\\";
@@ -62,7 +62,7 @@ export * from \\"./scalars\\";
 export const resolvers = [
   ...crudResolvers,
   ...relationResolvers,
-] as unknown as NonEmptyArray<Function>;
+] as Function[];
 "
 `;
 
@@ -73,41 +73,39 @@ export { UserRelationsResolver } from \\"./User/UserRelationsResolver\\";
 `;
 
 exports[`relations resolvers generation should properly generate args classes for sorting by relation fields: FirstModelSecondModelsFieldArgs 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import * as GraphQLScalars from \\"graphql-scalars\\";
-import { SecondModelOrderByWithRelationInput } from \\"../../../inputs/SecondModelOrderByWithRelationInput\\";
-import { SecondModelWhereInput } from \\"../../../inputs/SecondModelWhereInput\\";
-import { SecondModelWhereUniqueInput } from \\"../../../inputs/SecondModelWhereUniqueInput\\";
+import { SecondModelOrderByWithRelationInput, SecondModelWhereInput, SecondModelWhereUniqueInput } from \\"../../../inputs\\";
 import { SecondModelScalarFieldEnum } from \\"../../../../enums/SecondModelScalarFieldEnum\\";
 
-@TypeGraphQL.ArgsType()
+@ArgsType()
 export class FirstModelSecondModelsFieldArgs {
-  @TypeGraphQL.Field(_type => SecondModelWhereInput, {
+  @Field((_type: any) => SecondModelWhereInput, {
     nullable: true
   })
   where?: SecondModelWhereInput | undefined;
 
-  @TypeGraphQL.Field(_type => [SecondModelOrderByWithRelationInput], {
+  @Field((_type: any) => [SecondModelOrderByWithRelationInput], {
     nullable: true
   })
   orderBy?: SecondModelOrderByWithRelationInput[] | undefined;
 
-  @TypeGraphQL.Field(_type => SecondModelWhereUniqueInput, {
+  @Field((_type: any) => SecondModelWhereUniqueInput, {
     nullable: true
   })
   cursor?: SecondModelWhereUniqueInput | undefined;
 
-  @TypeGraphQL.Field(_type => TypeGraphQL.Int, {
+  @Field((_type: any) => Int, {
     nullable: true
   })
   take?: number | undefined;
 
-  @TypeGraphQL.Field(_type => TypeGraphQL.Int, {
+  @Field((_type: any) => Int, {
     nullable: true
   })
   skip?: number | undefined;
 
-  @TypeGraphQL.Field(_type => [SecondModelScalarFieldEnum], {
+  @Field((_type: any) => [SecondModelScalarFieldEnum], {
     nullable: true
   })
   distinct?: Array<\\"idField\\" | \\"uniqueStringField\\" | \\"floatField\\" | \\"firstModelFieldId\\"> | undefined;
@@ -121,20 +119,21 @@ exports[`relations resolvers generation should properly generate args classes fo
 `;
 
 exports[`relations resolvers generation should properly generate composite keys where phrase in resolver: UsersOnProjectsRelationsResolver 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Project } from \\"../../../models/Project\\";
 import { User } from \\"../../../models/User\\";
 import { UsersOnProjects } from \\"../../../models/UsersOnProjects\\";
-import { transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import * as DataLoader from \\"dataloader\\";
 
-@TypeGraphQL.Resolver(_of => UsersOnProjects)
+@Resolver((_of: any) => UsersOnProjects)
 export class UsersOnProjectsRelationsResolver {
-  @TypeGraphQL.FieldResolver(_type => Project, {
+  @ResolveField((_type: any) => Project, {
     nullable: false
   })
-  async project(@TypeGraphQL.Root() usersOnProjects: UsersOnProjects, @TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo): Promise<Project> {
-    const { _count } = transformInfoIntoPrismaArgs(info);
+  async project(@Parent() usersOnProjects: UsersOnProjects, @Context() ctx: any, @Info() info: GraphQLResolveInfo): Promise<Project> {
+    const { _count } = transformInfoIntoPrismaArgs(info, 'UsersOnProjects', '', '');
     return getPrismaFromContext(ctx).usersOnProjects.findUniqueOrThrow({
       where: {
         userId_projectId: {
@@ -143,15 +142,15 @@ export class UsersOnProjectsRelationsResolver {
         },
       },
     }).project({
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count, 'UsersOnProjects', '', '')),
     });
   }
 
-  @TypeGraphQL.FieldResolver(_type => User, {
+  @ResolveField((_type: any) => User, {
     nullable: false
   })
-  async user(@TypeGraphQL.Root() usersOnProjects: UsersOnProjects, @TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo): Promise<User> {
-    const { _count } = transformInfoIntoPrismaArgs(info);
+  async user(@Parent() usersOnProjects: UsersOnProjects, @Context() ctx: any, @Info() info: GraphQLResolveInfo): Promise<User> {
+    const { _count } = transformInfoIntoPrismaArgs(info, 'UsersOnProjects', '', '');
     return getPrismaFromContext(ctx).usersOnProjects.findUniqueOrThrow({
       where: {
         userId_projectId: {
@@ -160,7 +159,7 @@ export class UsersOnProjectsRelationsResolver {
         },
       },
     }).user({
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count, 'UsersOnProjects', '', '')),
     });
   }
 }
@@ -176,17 +175,16 @@ export * from \\"./args.index\\";
 exports[`relations resolvers generation should properly generate index files for 1-1 relation resolvers: mainIndex 1`] = `
 "import * as crudResolversImport from \\"./resolvers/crud/resolvers-crud.index\\";
 import * as relationResolversImport from \\"./resolvers/relations/resolvers.index\\";
-import { NonEmptyArray } from \\"type-graphql\\";
 
 export * from \\"./enums\\";
 export * from \\"./models\\";
 export * from \\"./resolvers/crud\\";
 
-export const crudResolvers = Object.values(crudResolversImport) as unknown as NonEmptyArray<Function>;
+export const crudResolvers = Object.values(crudResolversImport) as Function[];
 
 export * from \\"./resolvers/relations\\";
 
-export const relationResolvers = Object.values(relationResolversImport) as unknown as NonEmptyArray<Function>;
+export const relationResolvers = Object.values(relationResolversImport) as Function[];
 
 export * from \\"./resolvers/inputs\\";
 export * from \\"./resolvers/outputs\\";
@@ -196,7 +194,7 @@ export * from \\"./scalars\\";
 export const resolvers = [
   ...crudResolvers,
   ...relationResolvers,
-] as unknown as NonEmptyArray<Function>;
+] as Function[];
 "
 `;
 
@@ -220,17 +218,16 @@ export * from \\"./args.index\\";
 exports[`relations resolvers generation should properly generate index files for 1-many relation resolvers: mainIndex 1`] = `
 "import * as crudResolversImport from \\"./resolvers/crud/resolvers-crud.index\\";
 import * as relationResolversImport from \\"./resolvers/relations/resolvers.index\\";
-import { NonEmptyArray } from \\"type-graphql\\";
 
 export * from \\"./enums\\";
 export * from \\"./models\\";
 export * from \\"./resolvers/crud\\";
 
-export const crudResolvers = Object.values(crudResolversImport) as unknown as NonEmptyArray<Function>;
+export const crudResolvers = Object.values(crudResolversImport) as Function[];
 
 export * from \\"./resolvers/relations\\";
 
-export const relationResolvers = Object.values(relationResolversImport) as unknown as NonEmptyArray<Function>;
+export const relationResolvers = Object.values(relationResolversImport) as Function[];
 
 export * from \\"./resolvers/inputs\\";
 export * from \\"./resolvers/outputs\\";
@@ -240,7 +237,7 @@ export * from \\"./scalars\\";
 export const resolvers = [
   ...crudResolvers,
   ...relationResolvers,
-] as unknown as NonEmptyArray<Function>;
+] as Function[];
 "
 `;
 
@@ -251,19 +248,20 @@ export { UserRelationsResolver } from \\"./User/UserRelationsResolver\\";
 `;
 
 exports[`relations resolvers generation should properly generate relation resolver class for model with multi id keys with relation: MovieRelationsResolver 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Director } from \\"../../../models/Director\\";
 import { Movie } from \\"../../../models/Movie\\";
-import { transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import * as DataLoader from \\"dataloader\\";
 
-@TypeGraphQL.Resolver(_of => Movie)
+@Resolver((_of: any) => Movie)
 export class MovieRelationsResolver {
-  @TypeGraphQL.FieldResolver(_type => Director, {
+  @ResolveField((_type: any) => Director, {
     nullable: false
   })
-  async director(@TypeGraphQL.Root() movie: Movie, @TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo): Promise<Director> {
-    const { _count } = transformInfoIntoPrismaArgs(info);
+  async director(@Parent() movie: Movie, @Context() ctx: any, @Info() info: GraphQLResolveInfo): Promise<Director> {
+    const { _count } = transformInfoIntoPrismaArgs(info, 'Movie', '', '');
     return getPrismaFromContext(ctx).movie.findUniqueOrThrow({
       where: {
         directorFirstName_directorLastName_title: {
@@ -273,7 +271,7 @@ export class MovieRelationsResolver {
         },
       },
     }).director({
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count, 'Movie', '', '')),
     });
   }
 }
@@ -281,19 +279,20 @@ export class MovieRelationsResolver {
 `;
 
 exports[`relations resolvers generation should properly generate relation resolver class for model with named compound id with relation: MovieRelationsResolver 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Director } from \\"../../../models/Director\\";
 import { Movie } from \\"../../../models/Movie\\";
-import { transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import * as DataLoader from \\"dataloader\\";
 
-@TypeGraphQL.Resolver(_of => Movie)
+@Resolver((_of: any) => Movie)
 export class MovieRelationsResolver {
-  @TypeGraphQL.FieldResolver(_type => Director, {
+  @ResolveField((_type: any) => Director, {
     nullable: false
   })
-  async director(@TypeGraphQL.Root() movie: Movie, @TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo): Promise<Director> {
-    const { _count } = transformInfoIntoPrismaArgs(info);
+  async director(@Parent() movie: Movie, @Context() ctx: any, @Info() info: GraphQLResolveInfo): Promise<Director> {
+    const { _count } = transformInfoIntoPrismaArgs(info, 'Movie', '', '');
     return getPrismaFromContext(ctx).movie.findUniqueOrThrow({
       where: {
         movieIdCompoundName: {
@@ -303,7 +302,7 @@ export class MovieRelationsResolver {
         },
       },
     }).director({
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count, 'Movie', '', '')),
     });
   }
 }
@@ -311,19 +310,20 @@ export class MovieRelationsResolver {
 `;
 
 exports[`relations resolvers generation should properly generate relation resolver class for model with named compound unique with relation: MovieRelationsResolver 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Director } from \\"../../../models/Director\\";
 import { Movie } from \\"../../../models/Movie\\";
-import { transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import * as DataLoader from \\"dataloader\\";
 
-@TypeGraphQL.Resolver(_of => Movie)
+@Resolver((_of: any) => Movie)
 export class MovieRelationsResolver {
-  @TypeGraphQL.FieldResolver(_type => Director, {
+  @ResolveField((_type: any) => Director, {
     nullable: false
   })
-  async director(@TypeGraphQL.Root() movie: Movie, @TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo): Promise<Director> {
-    const { _count } = transformInfoIntoPrismaArgs(info);
+  async director(@Parent() movie: Movie, @Context() ctx: any, @Info() info: GraphQLResolveInfo): Promise<Director> {
+    const { _count } = transformInfoIntoPrismaArgs(info, 'Movie', '', '');
     return getPrismaFromContext(ctx).movie.findUniqueOrThrow({
       where: {
         movieUniqueCompoundName: {
@@ -333,7 +333,7 @@ export class MovieRelationsResolver {
         },
       },
     }).director({
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count, 'Movie', '', '')),
     });
   }
 }
@@ -341,20 +341,21 @@ export class MovieRelationsResolver {
 `;
 
 exports[`relations resolvers generation should properly generate relation resolver class for model with unique fields: DirectorRelationsResolver 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Director } from \\"../../../models/Director\\";
 import { Movie } from \\"../../../models/Movie\\";
 import { DirectorMoviesArgs } from \\"./args/DirectorMoviesArgs\\";
-import { transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import * as DataLoader from \\"dataloader\\";
 
-@TypeGraphQL.Resolver(_of => Director)
+@Resolver((_of: any) => Director)
 export class DirectorRelationsResolver {
-  @TypeGraphQL.FieldResolver(_type => [Movie], {
+  @ResolveField((_type: any) => [Movie], {
     nullable: false
   })
-  async movies(@TypeGraphQL.Root() director: Director, @TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args() args: DirectorMoviesArgs): Promise<Movie[]> {
-    const { _count } = transformInfoIntoPrismaArgs(info);
+  async movies(@Parent() director: Director, @Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: DirectorMoviesArgs): Promise<Movie[]> {
+    const { _count } = transformInfoIntoPrismaArgs(info, 'Director', '', '');
     return getPrismaFromContext(ctx).director.findUniqueOrThrow({
       where: {
         firstName_lastName: {
@@ -364,7 +365,7 @@ export class DirectorRelationsResolver {
       },
     }).movies({
       ...args,
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count, 'Director', '', '')),
     });
   }
 }
@@ -372,27 +373,28 @@ export class DirectorRelationsResolver {
 `;
 
 exports[`relations resolvers generation should properly generate relation resolvers classes for models with omitted relation field: PostRelationsResolver 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Post } from \\"../../../models/Post\\";
 import { User } from \\"../../../models/User\\";
 import { PostAuthorArgs } from \\"./args/PostAuthorArgs\\";
-import { transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import * as DataLoader from \\"dataloader\\";
 
-@TypeGraphQL.Resolver(_of => Post)
+@Resolver((_of: any) => Post)
 export class PostRelationsResolver {
-  @TypeGraphQL.FieldResolver(_type => User, {
+  @ResolveField((_type: any) => User, {
     nullable: true
   })
-  async author(@TypeGraphQL.Root() post: Post, @TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args() args: PostAuthorArgs): Promise<User | null> {
-    const { _count } = transformInfoIntoPrismaArgs(info);
+  async author(@Parent() post: Post, @Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: PostAuthorArgs): Promise<User | null> {
+    const { _count } = transformInfoIntoPrismaArgs(info, 'Post', '', '');
     return getPrismaFromContext(ctx).post.findUniqueOrThrow({
       where: {
         uuid: post.uuid,
       },
     }).author({
       ...args,
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count, 'Post', '', '')),
     });
   }
 }
@@ -400,27 +402,28 @@ export class PostRelationsResolver {
 `;
 
 exports[`relations resolvers generation should properly generate relation resolvers classes for models with omitted relation field: UserRelationsResolver 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Post } from \\"../../../models/Post\\";
 import { User } from \\"../../../models/User\\";
 import { UserPostsArgs } from \\"./args/UserPostsArgs\\";
-import { transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import * as DataLoader from \\"dataloader\\";
 
-@TypeGraphQL.Resolver(_of => User)
+@Resolver((_of: any) => User)
 export class UserRelationsResolver {
-  @TypeGraphQL.FieldResolver(_type => [Post], {
+  @ResolveField((_type: any) => [Post], {
     nullable: false
   })
-  async posts(@TypeGraphQL.Root() user: User, @TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args() args: UserPostsArgs): Promise<Post[]> {
-    const { _count } = transformInfoIntoPrismaArgs(info);
+  async posts(@Parent() user: User, @Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: UserPostsArgs): Promise<Post[]> {
+    const { _count } = transformInfoIntoPrismaArgs(info, 'User', '', '');
     return getPrismaFromContext(ctx).user.findUniqueOrThrow({
       where: {
         id: user.id,
       },
     }).posts({
       ...args,
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count, 'User', '', '')),
     });
   }
 }
@@ -428,28 +431,29 @@ export class UserRelationsResolver {
 `;
 
 exports[`relations resolvers generation should properly generate relation resolvers classes for models with renamed relation fields: PostRelationsResolver 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Post } from \\"../../../models/Post\\";
 import { User } from \\"../../../models/User\\";
 import { PostAuthorArgs } from \\"./args/PostAuthorArgs\\";
-import { transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import * as DataLoader from \\"dataloader\\";
 
-@TypeGraphQL.Resolver(_of => Post)
+@Resolver((_of: any) => Post)
 export class PostRelationsResolver {
-  @TypeGraphQL.FieldResolver(_type => User, {
+  @ResolveField((_type: any) => User, {
     nullable: true,
     description: \\"author field doc\\"
   })
-  async postAuthor(@TypeGraphQL.Root() post: Post, @TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args() args: PostAuthorArgs): Promise<User | null> {
-    const { _count } = transformInfoIntoPrismaArgs(info);
+  async postAuthor(@Parent() post: Post, @Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: PostAuthorArgs): Promise<User | null> {
+    const { _count } = transformInfoIntoPrismaArgs(info, 'Post', '', '');
     return getPrismaFromContext(ctx).post.findUniqueOrThrow({
       where: {
         uuid: post.uuid,
       },
     }).author({
       ...args,
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count, 'Post', '', '')),
     });
   }
 }
@@ -457,27 +461,28 @@ export class PostRelationsResolver {
 `;
 
 exports[`relations resolvers generation should properly generate relation resolvers classes for models with renamed relation fields: UserRelationsResolver 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Post } from \\"../../../models/Post\\";
 import { User } from \\"../../../models/User\\";
 import { UserPostsArgs } from \\"./args/UserPostsArgs\\";
-import { transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import * as DataLoader from \\"dataloader\\";
 
-@TypeGraphQL.Resolver(_of => User)
+@Resolver((_of: any) => User)
 export class UserRelationsResolver {
-  @TypeGraphQL.FieldResolver(_type => [Post], {
+  @ResolveField((_type: any) => [Post], {
     nullable: false
   })
-  async userPosts(@TypeGraphQL.Root() user: User, @TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args() args: UserPostsArgs): Promise<Post[]> {
-    const { _count } = transformInfoIntoPrismaArgs(info);
+  async userPosts(@Parent() user: User, @Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: UserPostsArgs): Promise<Post[]> {
+    const { _count } = transformInfoIntoPrismaArgs(info, 'User', '', '');
     return getPrismaFromContext(ctx).user.findUniqueOrThrow({
       where: {
         id: user.id,
       },
     }).posts({
       ...args,
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count, 'User', '', '')),
     });
   }
 }
@@ -485,41 +490,39 @@ export class UserRelationsResolver {
 `;
 
 exports[`relations resolvers generation should properly generate resolver and args class for array relation resolvers: UserPostsArgs 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import * as GraphQLScalars from \\"graphql-scalars\\";
-import { PostOrderByWithRelationInput } from \\"../../../inputs/PostOrderByWithRelationInput\\";
-import { PostWhereInput } from \\"../../../inputs/PostWhereInput\\";
-import { PostWhereUniqueInput } from \\"../../../inputs/PostWhereUniqueInput\\";
+import { PostOrderByWithRelationInput, PostWhereInput, PostWhereUniqueInput } from \\"../../../inputs\\";
 import { PostScalarFieldEnum } from \\"../../../../enums/PostScalarFieldEnum\\";
 
-@TypeGraphQL.ArgsType()
+@ArgsType()
 export class UserPostsArgs {
-  @TypeGraphQL.Field(_type => PostWhereInput, {
+  @Field((_type: any) => PostWhereInput, {
     nullable: true
   })
   where?: PostWhereInput | undefined;
 
-  @TypeGraphQL.Field(_type => [PostOrderByWithRelationInput], {
+  @Field((_type: any) => [PostOrderByWithRelationInput], {
     nullable: true
   })
   orderBy?: PostOrderByWithRelationInput[] | undefined;
 
-  @TypeGraphQL.Field(_type => PostWhereUniqueInput, {
+  @Field((_type: any) => PostWhereUniqueInput, {
     nullable: true
   })
   cursor?: PostWhereUniqueInput | undefined;
 
-  @TypeGraphQL.Field(_type => TypeGraphQL.Int, {
+  @Field((_type: any) => Int, {
     nullable: true
   })
   take?: number | undefined;
 
-  @TypeGraphQL.Field(_type => TypeGraphQL.Int, {
+  @Field((_type: any) => Int, {
     nullable: true
   })
   skip?: number | undefined;
 
-  @TypeGraphQL.Field(_type => [PostScalarFieldEnum], {
+  @Field((_type: any) => [PostScalarFieldEnum], {
     nullable: true
   })
   distinct?: Array<\\"uuid\\" | \\"content\\" | \\"authorId\\"> | undefined;
@@ -528,27 +531,28 @@ export class UserPostsArgs {
 `;
 
 exports[`relations resolvers generation should properly generate resolver and args class for array relation resolvers: UserRelationsResolver 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Post } from \\"../../../models/Post\\";
 import { User } from \\"../../../models/User\\";
 import { UserPostsArgs } from \\"./args/UserPostsArgs\\";
-import { transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import * as DataLoader from \\"dataloader\\";
 
-@TypeGraphQL.Resolver(_of => User)
+@Resolver((_of: any) => User)
 export class UserRelationsResolver {
-  @TypeGraphQL.FieldResolver(_type => [Post], {
+  @ResolveField((_type: any) => [Post], {
     nullable: false
   })
-  async posts(@TypeGraphQL.Root() user: User, @TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args() args: UserPostsArgs): Promise<Post[]> {
-    const { _count } = transformInfoIntoPrismaArgs(info);
+  async posts(@Parent() user: User, @Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: UserPostsArgs): Promise<Post[]> {
+    const { _count } = transformInfoIntoPrismaArgs(info, 'User', '', '');
     return getPrismaFromContext(ctx).user.findUniqueOrThrow({
       where: {
         id: user.id,
       },
     }).posts({
       ...args,
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count, 'User', '', '')),
     });
   }
 }
@@ -556,27 +560,28 @@ export class UserRelationsResolver {
 `;
 
 exports[`relations resolvers generation should properly generate resolver class for single relation resolvers: UserRelationsResolver 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Address } from \\"../../../models/Address\\";
 import { User } from \\"../../../models/User\\";
 import { UserAddressArgs } from \\"./args/UserAddressArgs\\";
-import { transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import * as DataLoader from \\"dataloader\\";
 
-@TypeGraphQL.Resolver(_of => User)
+@Resolver((_of: any) => User)
 export class UserRelationsResolver {
-  @TypeGraphQL.FieldResolver(_type => Address, {
+  @ResolveField((_type: any) => Address, {
     nullable: true
   })
-  async address(@TypeGraphQL.Root() user: User, @TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args() args: UserAddressArgs): Promise<Address | null> {
-    const { _count } = transformInfoIntoPrismaArgs(info);
+  async address(@Parent() user: User, @Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: UserAddressArgs): Promise<Address | null> {
+    const { _count } = transformInfoIntoPrismaArgs(info, 'User', '', '');
     return getPrismaFromContext(ctx).user.findUniqueOrThrow({
       where: {
         id: user.id,
       },
     }).address({
       ...args,
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count, 'User', '', '')),
     });
   }
 }
@@ -584,28 +589,29 @@ export class UserRelationsResolver {
 `;
 
 exports[`relations resolvers generation should properly generate resolvers classes for prisma models with cyclic relations: Post 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Post } from \\"../../../models/Post\\";
 import { User } from \\"../../../models/User\\";
 import { PostAuthorArgs } from \\"./args/PostAuthorArgs\\";
-import { transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import * as DataLoader from \\"dataloader\\";
 
-@TypeGraphQL.Resolver(_of => Post)
+@Resolver((_of: any) => Post)
 export class PostRelationsResolver {
-  @TypeGraphQL.FieldResolver(_type => User, {
+  @ResolveField((_type: any) => User, {
     nullable: true,
     description: \\"author field doc\\"
   })
-  async author(@TypeGraphQL.Root() post: Post, @TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args() args: PostAuthorArgs): Promise<User | null> {
-    const { _count } = transformInfoIntoPrismaArgs(info);
+  async author(@Parent() post: Post, @Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: PostAuthorArgs): Promise<User | null> {
+    const { _count } = transformInfoIntoPrismaArgs(info, 'Post', '', '');
     return getPrismaFromContext(ctx).post.findUniqueOrThrow({
       where: {
         uuid: post.uuid,
       },
     }).author({
       ...args,
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count, 'Post', '', '')),
     });
   }
 }
@@ -613,27 +619,28 @@ export class PostRelationsResolver {
 `;
 
 exports[`relations resolvers generation should properly generate resolvers classes for prisma models with cyclic relations: User 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Post } from \\"../../../models/Post\\";
 import { User } from \\"../../../models/User\\";
 import { UserPostsArgs } from \\"./args/UserPostsArgs\\";
-import { transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import * as DataLoader from \\"dataloader\\";
 
-@TypeGraphQL.Resolver(_of => User)
+@Resolver((_of: any) => User)
 export class UserRelationsResolver {
-  @TypeGraphQL.FieldResolver(_type => [Post], {
+  @ResolveField((_type: any) => [Post], {
     nullable: false
   })
-  async posts(@TypeGraphQL.Root() user: User, @TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args() args: UserPostsArgs): Promise<Post[]> {
-    const { _count } = transformInfoIntoPrismaArgs(info);
+  async posts(@Parent() user: User, @Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: UserPostsArgs): Promise<Post[]> {
+    const { _count } = transformInfoIntoPrismaArgs(info, 'User', '', '');
     return getPrismaFromContext(ctx).user.findUniqueOrThrow({
       where: {
         id: user.id,
       },
     }).posts({
       ...args,
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count, 'User', '', '')),
     });
   }
 }
@@ -641,41 +648,39 @@ export class UserRelationsResolver {
 `;
 
 exports[`relations resolvers generation when \`fullTextSearch\` preview feature is enabled should properly generate args type classes using SearchRelevanceInput: FirstModelSecondModelsFieldArgs 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import * as GraphQLScalars from \\"graphql-scalars\\";
-import { SecondModelOrderByWithRelationInput } from \\"../../../inputs/SecondModelOrderByWithRelationInput\\";
-import { SecondModelWhereInput } from \\"../../../inputs/SecondModelWhereInput\\";
-import { SecondModelWhereUniqueInput } from \\"../../../inputs/SecondModelWhereUniqueInput\\";
+import { SecondModelOrderByWithRelationInput, SecondModelWhereInput, SecondModelWhereUniqueInput } from \\"../../../inputs\\";
 import { SecondModelScalarFieldEnum } from \\"../../../../enums/SecondModelScalarFieldEnum\\";
 
-@TypeGraphQL.ArgsType()
+@ArgsType()
 export class FirstModelSecondModelsFieldArgs {
-  @TypeGraphQL.Field(_type => SecondModelWhereInput, {
+  @Field((_type: any) => SecondModelWhereInput, {
     nullable: true
   })
   where?: SecondModelWhereInput | undefined;
 
-  @TypeGraphQL.Field(_type => [SecondModelOrderByWithRelationInput], {
+  @Field((_type: any) => [SecondModelOrderByWithRelationInput], {
     nullable: true
   })
   orderBy?: SecondModelOrderByWithRelationInput[] | undefined;
 
-  @TypeGraphQL.Field(_type => SecondModelWhereUniqueInput, {
+  @Field((_type: any) => SecondModelWhereUniqueInput, {
     nullable: true
   })
   cursor?: SecondModelWhereUniqueInput | undefined;
 
-  @TypeGraphQL.Field(_type => TypeGraphQL.Int, {
+  @Field((_type: any) => Int, {
     nullable: true
   })
   take?: number | undefined;
 
-  @TypeGraphQL.Field(_type => TypeGraphQL.Int, {
+  @Field((_type: any) => Int, {
     nullable: true
   })
   skip?: number | undefined;
 
-  @TypeGraphQL.Field(_type => [SecondModelScalarFieldEnum], {
+  @Field((_type: any) => [SecondModelScalarFieldEnum], {
     nullable: true
   })
   distinct?: Array<\\"idField\\" | \\"uniqueStringField\\" | \\"floatField\\" | \\"firstModelFieldId\\"> | undefined;
@@ -684,27 +689,28 @@ export class FirstModelSecondModelsFieldArgs {
 `;
 
 exports[`relations resolvers generation when emitRedundantTypesInfo is set to true should properly generate type info for @Args decorator: UserRelationsResolver 1`] = `
-"import * as TypeGraphQL from \\"type-graphql\\";
+"import { Args, ArgsType, Context, Field, Float, ID, Info, InputType, Int, Mutation, ObjectType, Parent, Query, ResolveField, Resolver, registerEnumType } from \\"@nestjs/graphql\\";
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Post } from \\"../../../models/Post\\";
 import { User } from \\"../../../models/User\\";
 import { UserPostsArgs } from \\"./args/UserPostsArgs\\";
-import { transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import * as DataLoader from \\"dataloader\\";
 
-@TypeGraphQL.Resolver(_of => User)
+@Resolver((_of: any) => User)
 export class UserRelationsResolver {
-  @TypeGraphQL.FieldResolver(_type => [Post], {
+  @ResolveField((_type: any) => [Post], {
     nullable: false
   })
-  async posts(@TypeGraphQL.Root() user: User, @TypeGraphQL.Ctx() ctx: any, @TypeGraphQL.Info() info: GraphQLResolveInfo, @TypeGraphQL.Args(_type => UserPostsArgs) args: UserPostsArgs): Promise<Post[]> {
-    const { _count } = transformInfoIntoPrismaArgs(info);
+  async posts(@Parent() user: User, @Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args((_type: any) => UserPostsArgs) args: UserPostsArgs): Promise<Post[]> {
+    const { _count } = transformInfoIntoPrismaArgs(info, 'User', '', '');
     return getPrismaFromContext(ctx).user.findUniqueOrThrow({
       where: {
         id: user.id,
       },
     }).posts({
       ...args,
-      ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      ...(_count && transformCountFieldIntoSelectRelationsCount(_count, 'User', '', '')),
     });
   }
 }

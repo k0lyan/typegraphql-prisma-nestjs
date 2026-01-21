@@ -3,6 +3,11 @@ import type { Config } from "@jest/types";
 const config: Config.InitialOptions = {
   verbose: false,
   testEnvironment: "node",
+  // Memory optimization settings
+  maxWorkers: "50%", // Use only half of available CPU cores
+  workerIdleMemoryLimit: "512MB", // Restart workers that exceed 512MB
+  forceExit: true, // Force exit after all tests complete
+  detectOpenHandles: false, // Disable in normal runs (enable for debugging)
   transform: {
     // '^.+\\.[tj]sx?$' to process js/ts with `ts-jest`
     // '^.+\\.m?[tj]sx?$' to process js/ts/mjs/mts with `ts-jest`

@@ -68,7 +68,7 @@ export default function generateCrudResolverClassFromMapping(
     decorators: [
       {
         name: "Resolver",
-        arguments: [`_of => ${model.typeName}`],
+        arguments: [`(_of: any) => ${model.typeName}`],
       },
     ],
     methods: mapping.actions

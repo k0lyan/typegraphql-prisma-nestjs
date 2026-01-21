@@ -18,7 +18,7 @@ export function generateCrudResolverClassMethodDeclaration(
       {
         name: `${action.operation}`,
         arguments: [
-          `_returns => ${action.typeGraphQLType}`,
+          `(_returns: any) => ${action.typeGraphQLType}`,
           Writers.object({
             nullable: `${!action.method.isRequired}`,
           }),
@@ -47,7 +47,7 @@ export function generateCrudResolverClassMethodDeclaration(
                 {
                   name: "Args",
                   arguments: generatorOptions.emitRedundantTypesInfo
-                    ? [`_type => ${action.argsTypeName}`]
+                    ? [`(_type: any) => ${action.argsTypeName}`]
                     : [],
                 },
               ],

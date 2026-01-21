@@ -7,10 +7,11 @@ export default async function getPrismaClientDmmfFromPrismaSchema(
   provider = "postgresql",
 ): Promise<PrismaDMMF.Document> {
   const previewFeaturesToEmit = [...previewFeatures];
+  // Prisma 7 no longer supports `url` in datasource for getDMMF
+  // We only need the provider for schema validation
   const datamodelWithGeneratorBlock = /* prisma */ `
     datasource db {
       provider = "${provider}"
-      url      = env("DATABASE_URL")
     }
     generator client {
       provider = "prisma-client-js"

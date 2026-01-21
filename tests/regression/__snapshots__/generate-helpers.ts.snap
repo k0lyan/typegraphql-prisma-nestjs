@@ -3,8 +3,9 @@
 exports[`helpers should properly emit helpers file: helpers 1`] = `
 "import type { GraphQLResolveInfo } from \\"graphql\\";
 import graphqlFields from \\"graphql-fields\\";
+import * as DataLoader from \\"dataloader\\";
 
-export function transformInfoIntoPrismaArgs(info: GraphQLResolveInfo): Record<string, any> {
+export function transformInfoIntoPrismaArgs(info: GraphQLResolveInfo, modelName?: string, collectionName?: string, prismaMethod?: string, isResolveField?: boolean): Record<string, any> {
   const fields: Record<string, any> = graphqlFields(
     // suppress GraphQLResolveInfo types issue
     info as any,
@@ -14,10 +15,10 @@ export function transformInfoIntoPrismaArgs(info: GraphQLResolveInfo): Record<st
       processArguments: true,
     }
   );
-  return transformFields(fields);
+  return transformFields(fields, modelName, collectionName, prismaMethod, isResolveField);
 }
 
-function transformFields(fields: Record<string, any>): Record<string, any> {
+function transformFields(fields: Record<string, any>, modelName?: string, collectionName?: string, prismaMethod?: string, isResolveField?: boolean): Record<string, any> {
   return Object.fromEntries(
     Object.entries(fields)
       .map<[string, any]>(([key, value]) => {
@@ -32,7 +33,7 @@ function transformFields(fields: Record<string, any>): Record<string, any> {
             })
           )];
         }
-        return [key, transformFields(value)];
+        return [key, transformFields(value, modelName, collectionName, prismaMethod, isResolveField)];
       }),
   );
 }
@@ -45,7 +46,7 @@ export function getPrismaFromContext(context: any) {
   return prismaClient;
 }
 
-export function transformCountFieldIntoSelectRelationsCount(_count: object) {
+export function transformCountFieldIntoSelectRelationsCount(_count: object, modelName?: string, collectionName?: string, prismaMethod?: string, isResolveField?: boolean) {
   return {
     include: {
       _count: {
@@ -59,6 +60,47 @@ export function transformCountFieldIntoSelectRelationsCount(_count: object) {
   }
 }
 
+export let transformArgsIntoPrismaArgs = async function <TArgs = Record<string, any>, TContext = any>(info: GraphQLResolveInfo, args: TArgs, ctx: TContext, modelName?: string, collectionName?: string, prismaMethod?: string, afterProcessEvents?: ((result: any) => Promise<any>)[], isResolveField?: boolean): Promise<TArgs> {
+  return args;
+};
+
+export function setTransformArgsIntoPrismaArgs(newTransformArgsIntoPrismaArgs: typeof transformArgsIntoPrismaArgs) {
+  transformArgsIntoPrismaArgs = newTransformArgsIntoPrismaArgs;
+}
+
+/**
+ * Simple inline dataloader factory for type-graphql resolvers
+ * Creates a dataloader per request context
+ */
+export function InlineLoader<ID, Type>(
+  createLoader: (ctx: any) => DataLoader<ID, Type>,
+  _target: any,
+  _propertyKey: string,
+  parameterIndex: number
+) {
+  // This is a parameter decorator that creates dataloaders
+  // The actual loader creation happens at runtime in the resolver
+}
+
+/**
+ * Helper to get or create a dataloader from context
+ */
+export function getOrCreateLoader<ID, Type>(
+  ctx: any,
+  loaderKey: string,
+  createLoader: () => DataLoader<ID, Type>
+): DataLoader<ID, Type> {
+  if (!ctx._dataloaders) {
+    ctx._dataloaders = new Map();
+  }
+  if (!ctx._dataloaders.has(loaderKey)) {
+    ctx._dataloaders.set(loaderKey, createLoader());
+  }
+  return ctx._dataloaders.get(loaderKey);
+}
+
+
+
 
 
 
@@ -68,8 +110,9 @@ export function transformCountFieldIntoSelectRelationsCount(_count: object) {
 exports[`helpers when contextPrismaKey generator option is set should properly generate \`getPrismaFromContext\`: helpers 1`] = `
 "import type { GraphQLResolveInfo } from \\"graphql\\";
 import graphqlFields from \\"graphql-fields\\";
+import * as DataLoader from \\"dataloader\\";
 
-export function transformInfoIntoPrismaArgs(info: GraphQLResolveInfo): Record<string, any> {
+export function transformInfoIntoPrismaArgs(info: GraphQLResolveInfo, modelName?: string, collectionName?: string, prismaMethod?: string, isResolveField?: boolean): Record<string, any> {
   const fields: Record<string, any> = graphqlFields(
     // suppress GraphQLResolveInfo types issue
     info as any,
@@ -79,10 +122,10 @@ export function transformInfoIntoPrismaArgs(info: GraphQLResolveInfo): Record<st
       processArguments: true,
     }
   );
-  return transformFields(fields);
+  return transformFields(fields, modelName, collectionName, prismaMethod, isResolveField);
 }
 
-function transformFields(fields: Record<string, any>): Record<string, any> {
+function transformFields(fields: Record<string, any>, modelName?: string, collectionName?: string, prismaMethod?: string, isResolveField?: boolean): Record<string, any> {
   return Object.fromEntries(
     Object.entries(fields)
       .map<[string, any]>(([key, value]) => {
@@ -97,7 +140,7 @@ function transformFields(fields: Record<string, any>): Record<string, any> {
             })
           )];
         }
-        return [key, transformFields(value)];
+        return [key, transformFields(value, modelName, collectionName, prismaMethod, isResolveField)];
       }),
   );
 }
@@ -110,7 +153,7 @@ export function getPrismaFromContext(context: any) {
   return prismaClient;
 }
 
-export function transformCountFieldIntoSelectRelationsCount(_count: object) {
+export function transformCountFieldIntoSelectRelationsCount(_count: object, modelName?: string, collectionName?: string, prismaMethod?: string, isResolveField?: boolean) {
   return {
     include: {
       _count: {
@@ -123,6 +166,47 @@ export function transformCountFieldIntoSelectRelationsCount(_count: object) {
     },
   }
 }
+
+export let transformArgsIntoPrismaArgs = async function <TArgs = Record<string, any>, TContext = any>(info: GraphQLResolveInfo, args: TArgs, ctx: TContext, modelName?: string, collectionName?: string, prismaMethod?: string, afterProcessEvents?: ((result: any) => Promise<any>)[], isResolveField?: boolean): Promise<TArgs> {
+  return args;
+};
+
+export function setTransformArgsIntoPrismaArgs(newTransformArgsIntoPrismaArgs: typeof transformArgsIntoPrismaArgs) {
+  transformArgsIntoPrismaArgs = newTransformArgsIntoPrismaArgs;
+}
+
+/**
+ * Simple inline dataloader factory for type-graphql resolvers
+ * Creates a dataloader per request context
+ */
+export function InlineLoader<ID, Type>(
+  createLoader: (ctx: any) => DataLoader<ID, Type>,
+  _target: any,
+  _propertyKey: string,
+  parameterIndex: number
+) {
+  // This is a parameter decorator that creates dataloaders
+  // The actual loader creation happens at runtime in the resolver
+}
+
+/**
+ * Helper to get or create a dataloader from context
+ */
+export function getOrCreateLoader<ID, Type>(
+  ctx: any,
+  loaderKey: string,
+  createLoader: () => DataLoader<ID, Type>
+): DataLoader<ID, Type> {
+  if (!ctx._dataloaders) {
+    ctx._dataloaders = new Map();
+  }
+  if (!ctx._dataloaders.has(loaderKey)) {
+    ctx._dataloaders.set(loaderKey, createLoader());
+  }
+  return ctx._dataloaders.get(loaderKey);
+}
+
+
 
 
 

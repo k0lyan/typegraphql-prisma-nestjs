@@ -2,13 +2,12 @@
 
 exports[`custom scalars should properly emit custom scalars file: mainIndex 1`] = `
 "import * as crudResolversImport from \\"./resolvers/crud/resolvers-crud.index\\";
-import { NonEmptyArray } from \\"type-graphql\\";
 
 export * from \\"./enums\\";
 export * from \\"./models\\";
 export * from \\"./resolvers/crud\\";
 
-export const crudResolvers = Object.values(crudResolversImport) as unknown as NonEmptyArray<Function>;
+export const crudResolvers = Object.values(crudResolversImport) as Function[];
 
 export * from \\"./resolvers/inputs\\";
 export * from \\"./resolvers/outputs\\";
@@ -18,7 +17,7 @@ export * from \\"./scalars\\";
 export const resolvers = [
   ...crudResolvers,
 
-] as unknown as NonEmptyArray<Function>;
+] as Function[];
 "
 `;
 

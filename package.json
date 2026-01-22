@@ -39,7 +39,7 @@
     "https-proxy-agent": "7.0.5",
     "pluralize": "^8.0.0",
     "semver": "^7.6.3",
-    "ts-morph": "^23.0.0",
+    "ts-morph": "^27.0.0",
     "tslib": "*"
   },
   "devDependencies": {

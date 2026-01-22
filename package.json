@@ -19,13 +19,13 @@
     "typegraphql-prisma-nestjs": "lib/generator.js"
   },
   "peerDependencies": {
-    "@prisma/client": "*",
-    "@types/graphql-fields": "*",
-    "@types/node": "*",
-    "graphql-fields": "*",
-    "graphql-scalars": "*",
-    "prisma": "*",
-    "tslib": "*"
+    "@prisma/client": "^6.0.0",
+    "@types/graphql-fields": "^1.3.9",
+    "@types/node": "^22.1.0",
+    "graphql-fields": "^2.0.3",
+    "graphql-scalars": "^1.23.0",
+    "prisma": "^6.0.0",
+    "tslib": "^2.6.3"
   },
   "dependencies": {
     "@antfu/ni": "0.22.0",

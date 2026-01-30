@@ -1,25 +1,25 @@
 import {
-  PropertyDeclarationStructure,
+  GetAccessorDeclarationStructure,
   OptionalKind,
   Project,
-  GetAccessorDeclarationStructure,
+  PropertyDeclarationStructure,
   Writers,
 } from "ts-morph";
-import path from "path";
-
 import {
-  generateTypeGraphQLImport,
-  generateModelsImports,
+  generateCustomScalarsImport,
   generateEnumsImports,
   generateGraphQLScalarsImport,
+  generateModelsImports,
   generatePrismaNamespaceImport,
-  generateCustomScalarsImport,
   generateResolversOutputsImports,
+  generateTypeGraphQLImport,
 } from "./imports";
-import { modelsFolderName } from "./config";
+
 import { DMMF } from "./dmmf/types";
 import { DmmfDocument } from "./dmmf/dmmf-document";
 import { convertNewLines } from "./helpers";
+import { modelsFolderName } from "./config";
+import path from "path";
 
 export default function generateObjectTypeClassFromModel(
   project: Project,
@@ -90,10 +90,17 @@ export default function generateObjectTypeClassFromModel(
         ],
     properties: [
       ...model.fields.map<OptionalKind<PropertyDeclarationStructure>>(field => {
+        const isRelation = !!field.relationName;
         const isOptional =
-          !!field.relationName ||
+          isRelation ||
           field.isOmitted.output ||
           (!field.isRequired && field.typeFieldAlias === undefined);
+
+        // For relation fields, determine nullability based on isList and isRequired
+        // Arrays are never nullable (empty array instead), single relations depend on isRequired
+        const isRelationNullable = isRelation
+          ? !field.isList && !field.isRequired
+          : false;
 
         return {
           name: field.name,
@@ -102,22 +109,33 @@ export default function generateObjectTypeClassFromModel(
           hasQuestionToken: isOptional,
           trailingTrivia: "\r\n",
           decorators: [
-            ...(field.relationName ||
-            field.typeFieldAlias ||
-            field.isOmitted.output
+            ...(field.typeFieldAlias || field.isOmitted.output
               ? []
-              : [
-                  {
-                    name: "Field",
-                    arguments: [
-                      `(_type: any) => ${field.typeGraphQLType}`,
-                      Writers.object({
-                        nullable: `${!!field.isOptional.output || isOptional}`,
-                        ...(field.docs && { description: `"${field.docs}"` }),
-                      }),
-                    ],
-                  },
-                ]),
+              : isRelation
+                ? [
+                    {
+                      name: "Field",
+                      arguments: [
+                        `(_type: any) => ${field.typeGraphQLType}`,
+                        Writers.object({
+                          nullable: `${isRelationNullable}`,
+                          ...(field.docs && { description: `"${field.docs}"` }),
+                        }),
+                      ],
+                    },
+                  ]
+                : [
+                    {
+                      name: "Field",
+                      arguments: [
+                        `(_type: any) => ${field.typeGraphQLType}`,
+                        Writers.object({
+                          nullable: `${!!field.isOptional.output || isOptional}`,
+                          ...(field.docs && { description: `"${field.docs}"` }),
+                        }),
+                      ],
+                    },
+                  ]),
           ],
           ...(field.docs && {
             docs: [{ description: `\n${convertNewLines(field.docs)}` }],

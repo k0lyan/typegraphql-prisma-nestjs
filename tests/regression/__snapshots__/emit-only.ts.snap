@@ -1675,6 +1675,9 @@ export class User {
   })
   email!: string;
 
+  @Field((_type: any) => [Post], {
+    nullable: false
+  })
   posts?: Post[];
 }
 "

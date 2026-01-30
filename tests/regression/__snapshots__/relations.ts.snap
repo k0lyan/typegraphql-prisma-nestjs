@@ -6,7 +6,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Point } from \\"../../../models/Point\\";
 import { User } from \\"../../../models/User\\";
 import { UserPointsArgs } from \\"./args/UserPointsArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import * as DataLoader from \\"dataloader\\";
 
 @Resolver((_of: any) => User)
@@ -124,7 +124,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Project } from \\"../../../models/Project\\";
 import { User } from \\"../../../models/User\\";
 import { UsersOnProjects } from \\"../../../models/UsersOnProjects\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import * as DataLoader from \\"dataloader\\";
 
 @Resolver((_of: any) => UsersOnProjects)
@@ -252,7 +252,7 @@ exports[`relations resolvers generation should properly generate relation resolv
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Director } from \\"../../../models/Director\\";
 import { Movie } from \\"../../../models/Movie\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import * as DataLoader from \\"dataloader\\";
 
 @Resolver((_of: any) => Movie)
@@ -283,7 +283,7 @@ exports[`relations resolvers generation should properly generate relation resolv
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Director } from \\"../../../models/Director\\";
 import { Movie } from \\"../../../models/Movie\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import * as DataLoader from \\"dataloader\\";
 
 @Resolver((_of: any) => Movie)
@@ -314,7 +314,7 @@ exports[`relations resolvers generation should properly generate relation resolv
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Director } from \\"../../../models/Director\\";
 import { Movie } from \\"../../../models/Movie\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import * as DataLoader from \\"dataloader\\";
 
 @Resolver((_of: any) => Movie)
@@ -346,7 +346,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Director } from \\"../../../models/Director\\";
 import { Movie } from \\"../../../models/Movie\\";
 import { DirectorMoviesArgs } from \\"./args/DirectorMoviesArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import * as DataLoader from \\"dataloader\\";
 
 @Resolver((_of: any) => Director)
@@ -378,7 +378,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Post } from \\"../../../models/Post\\";
 import { User } from \\"../../../models/User\\";
 import { PostAuthorArgs } from \\"./args/PostAuthorArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import * as DataLoader from \\"dataloader\\";
 
 @Resolver((_of: any) => Post)
@@ -407,7 +407,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Post } from \\"../../../models/Post\\";
 import { User } from \\"../../../models/User\\";
 import { UserPostsArgs } from \\"./args/UserPostsArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import * as DataLoader from \\"dataloader\\";
 
 @Resolver((_of: any) => User)
@@ -436,7 +436,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Post } from \\"../../../models/Post\\";
 import { User } from \\"../../../models/User\\";
 import { PostAuthorArgs } from \\"./args/PostAuthorArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import * as DataLoader from \\"dataloader\\";
 
 @Resolver((_of: any) => Post)
@@ -466,7 +466,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Post } from \\"../../../models/Post\\";
 import { User } from \\"../../../models/User\\";
 import { UserPostsArgs } from \\"./args/UserPostsArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import * as DataLoader from \\"dataloader\\";
 
 @Resolver((_of: any) => User)
@@ -536,7 +536,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Post } from \\"../../../models/Post\\";
 import { User } from \\"../../../models/User\\";
 import { UserPostsArgs } from \\"./args/UserPostsArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import * as DataLoader from \\"dataloader\\";
 
 @Resolver((_of: any) => User)
@@ -565,7 +565,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Address } from \\"../../../models/Address\\";
 import { User } from \\"../../../models/User\\";
 import { UserAddressArgs } from \\"./args/UserAddressArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import * as DataLoader from \\"dataloader\\";
 
 @Resolver((_of: any) => User)
@@ -594,7 +594,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Post } from \\"../../../models/Post\\";
 import { User } from \\"../../../models/User\\";
 import { PostAuthorArgs } from \\"./args/PostAuthorArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import * as DataLoader from \\"dataloader\\";
 
 @Resolver((_of: any) => Post)
@@ -624,7 +624,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Post } from \\"../../../models/Post\\";
 import { User } from \\"../../../models/User\\";
 import { UserPostsArgs } from \\"./args/UserPostsArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import * as DataLoader from \\"dataloader\\";
 
 @Resolver((_of: any) => User)
@@ -694,7 +694,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { Post } from \\"../../../models/Post\\";
 import { User } from \\"../../../models/User\\";
 import { UserPostsArgs } from \\"./args/UserPostsArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import * as DataLoader from \\"dataloader\\";
 
 @Resolver((_of: any) => User)

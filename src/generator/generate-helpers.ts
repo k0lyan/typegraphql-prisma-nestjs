@@ -1,9 +1,10 @@
-import { SourceFile } from "ts-morph";
 import {
   generateGraphQLFieldsImport,
   generateGraphQLInfoImport,
 } from "./imports";
+
 import { GeneratorOptions } from "./options";
+import { SourceFile } from "ts-morph";
 
 export function generateHelpersFile(
   sourceFile: SourceFile,
@@ -119,6 +120,175 @@ export function getOrCreateLoader<ID, Type>(
     ctx._dataloaders.set(loaderKey, createLoader());
   }
   return ctx._dataloaders.get(loaderKey);
+}
+  `);
+
+  // Add optimized Prisma query builder functions
+  sourceFile.addStatements(/* ts */ `
+/**
+ * Checks if a value represents a relation (nested object with fields)
+ */
+function isRelationField(value: any): boolean {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.keys(value).length > 0
+  );
+}
+
+/**
+ * Transforms GraphQL requested fields into Prisma select format.
+ * Recursively handles nested relations.
+ *
+ * @example
+ * Input (from transformInfoIntoPrismaArgs):
+ * {
+ *   "id": true,
+ *   "name": true,
+ *   "City": { "id": true, "name": true },
+ *   "posts": { "id": true, "title": true }
+ * }
+ *
+ * Output:
+ * {
+ *   id: true,
+ *   name: true,
+ *   City: { select: { id: true, name: true } },
+ *   posts: { select: { id: true, title: true } }
+ * }
+ */
+export function transformFieldsToSelect(
+  fields: Record<string, any>,
+): Record<string, any> {
+  const result: Record<string, any> = {};
+
+  for (const [key, value] of Object.entries(fields)) {
+    // Skip internal fields
+    if (key.startsWith('_')) {
+      continue;
+    }
+
+    if (value === true) {
+      // Scalar field
+      result[key] = true;
+    } else if (isRelationField(value)) {
+      // Relation field - recursively build nested select
+      result[key] = {
+        select: transformFieldsToSelect(value),
+      };
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Transform fields into include format (includes all scalars, just defines relations)
+ * This is less optimized but simpler when you need all scalar fields.
+ *
+ * @example
+ * Input:
+ * {
+ *   "id": true,
+ *   "City": { "id": true, "name": true }
+ * }
+ *
+ * Output:
+ * {
+ *   City: { select: { id: true, name: true } }
+ * }
+ */
+export function transformFieldsToInclude(
+  fields: Record<string, any>,
+): Record<string, any> | undefined {
+  const include: Record<string, any> = {};
+
+  for (const [key, value] of Object.entries(fields)) {
+    if (key.startsWith('_')) {
+      continue;
+    }
+
+    if (isRelationField(value)) {
+      include[key] = {
+        select: transformFieldsToSelect(value),
+      };
+    }
+  }
+
+  return Object.keys(include).length > 0 ? include : undefined;
+}
+
+/**
+ * Builds an optimized Prisma query from GraphQL args and info.
+ * Uses select for precise field selection including relations.
+ *
+ * @example
+ * \`\`\`typescript
+ * const prismaQuery = buildPrismaQueryFromArgs(args, info);
+ * const results = await prisma.user.findMany(prismaQuery);
+ * \`\`\`
+ */
+export function buildPrismaQueryFromArgs<TArgs extends Record<string, any>>(
+  args: TArgs,
+  info: GraphQLResolveInfo,
+  additionalWhere?: Record<string, any>,
+): TArgs & { select?: Record<string, any> } {
+  const fields = transformInfoIntoPrismaArgs(info);
+  const select = transformFieldsToSelect(fields);
+
+  const result: any = { ...args };
+
+  if (Object.keys(select).length > 0) {
+    result.select = select;
+  }
+
+  // Merge additional where conditions
+  if (additionalWhere) {
+    result.where = {
+      ...result.where,
+      ...additionalWhere,
+    };
+  }
+
+  return result;
+}
+
+/**
+ * Builds a Prisma query using include instead of select.
+ * Use this when you want all scalar fields plus specific relations.
+ *
+ * @example
+ * \`\`\`typescript
+ * const prismaQuery = buildPrismaQueryFromArgsWithInclude(args, info);
+ * const results = await prisma.user.findMany(prismaQuery);
+ * \`\`\`
+ */
+export function buildPrismaQueryFromArgsWithInclude<
+  TArgs extends Record<string, any>,
+>(
+  args: TArgs,
+  info: GraphQLResolveInfo,
+  additionalWhere?: Record<string, any>,
+): TArgs & { include?: Record<string, any> } {
+  const fields = transformInfoIntoPrismaArgs(info);
+  const include = transformFieldsToInclude(fields);
+
+  const result: any = { ...args };
+
+  if (include) {
+    result.include = include;
+  }
+
+  // Merge additional where conditions
+  if (additionalWhere) {
+    result.where = {
+      ...result.where,
+      ...additionalWhere,
+    };
+  }
+
+  return result;
 }
   `);
 }

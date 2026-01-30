@@ -4,12 +4,8 @@ exports[`crud resolvers execution basic operations _count for relations should p
 Array [
   Array [
     Object {
-      "include": Object {
-        "_count": Object {
-          "select": Object {
-            "secondModelsField": true,
-          },
-        },
+      "select": Object {
+        "idField": true,
       },
     },
   ],
@@ -102,6 +98,10 @@ Array [
           "intIdField": "desc",
         },
       ],
+      "select": Object {
+        "dateField": true,
+        "intIdField": true,
+      },
       "skip": 1,
       "take": 1,
       "where": Object {
@@ -129,6 +129,10 @@ exports[`crud resolvers execution basic operations should properly call PrismaCl
 Array [
   Array [
     Object {
+      "select": Object {
+        "dateField": true,
+        "intIdField": true,
+      },
       "where": Object {
         "uniqueStringField": "uniqueValue",
       },

@@ -6,7 +6,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { CreateManyAndReturnUserArgs } from \\"./args/CreateManyAndReturnUserArgs\\";
 import { User } from \\"../../../models/User\\";
 import { CreateManyAndReturnUser } from \\"../../outputs/CreateManyAndReturnUser\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => User)
 export class CreateManyAndReturnUserResolver {
@@ -33,7 +33,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { CreateManyUserArgs } from \\"./args/CreateManyUserArgs\\";
 import { User } from \\"../../../models/User\\";
 import { AffectedRowsOutput } from \\"../../outputs/AffectedRowsOutput\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => User)
 export class CreateManyUserResolver {
@@ -59,7 +59,7 @@ exports[`crud should properly generate actions resolver classes for prisma model
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { CreateOneUserArgs } from \\"./args/CreateOneUserArgs\\";
 import { User } from \\"../../../models/User\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => User)
 export class CreateOneUserResolver {
@@ -86,7 +86,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { DeleteManyUserArgs } from \\"./args/DeleteManyUserArgs\\";
 import { User } from \\"../../../models/User\\";
 import { AffectedRowsOutput } from \\"../../outputs/AffectedRowsOutput\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => User)
 export class DeleteManyUserResolver {
@@ -112,7 +112,7 @@ exports[`crud should properly generate actions resolver classes for prisma model
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { DeleteOneUserArgs } from \\"./args/DeleteOneUserArgs\\";
 import { User } from \\"../../../models/User\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => User)
 export class DeleteOneUserResolver {
@@ -138,7 +138,7 @@ exports[`crud should properly generate actions resolver classes for prisma model
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { FindFirstUserOrThrowArgs } from \\"./args/FindFirstUserOrThrowArgs\\";
 import { User } from \\"../../../models/User\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => User)
 export class FindFirstUserOrThrowResolver {
@@ -147,10 +147,9 @@ export class FindFirstUserOrThrowResolver {
   })
   async findFirstUserOrThrow(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindFirstUserOrThrowArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findFirstOrThrow');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findFirstOrThrow', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findFirstOrThrow');
-    const result = await getPrismaFromContext(ctx).user.findFirstOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findFirstOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -164,7 +163,7 @@ exports[`crud should properly generate actions resolver classes for prisma model
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { FindFirstUserArgs } from \\"./args/FindFirstUserArgs\\";
 import { User } from \\"../../../models/User\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => User)
 export class FindFirstUserResolver {
@@ -173,10 +172,9 @@ export class FindFirstUserResolver {
   })
   async findFirstUser(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindFirstUserArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findFirst');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findFirst', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findFirst');
-    const result = await getPrismaFromContext(ctx).user.findFirst({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findFirst(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -190,7 +188,7 @@ exports[`crud should properly generate actions resolver classes for prisma model
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { FindManyUserArgs } from \\"./args/FindManyUserArgs\\";
 import { User } from \\"../../../models/User\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => User)
 export class FindManyUserResolver {
@@ -199,10 +197,9 @@ export class FindManyUserResolver {
   })
   async users(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindManyUserArgs): Promise<User[]> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findMany');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findMany', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findMany');
-    const result = await getPrismaFromContext(ctx).user.findMany({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findMany(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -216,7 +213,7 @@ exports[`crud should properly generate actions resolver classes for prisma model
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { FindUniqueUserOrThrowArgs } from \\"./args/FindUniqueUserOrThrowArgs\\";
 import { User } from \\"../../../models/User\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => User)
 export class FindUniqueUserOrThrowResolver {
@@ -225,10 +222,9 @@ export class FindUniqueUserOrThrowResolver {
   })
   async getUser(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueUserOrThrowArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findUniqueOrThrow');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUniqueOrThrow', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findUniqueOrThrow');
-    const result = await getPrismaFromContext(ctx).user.findUniqueOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findUniqueOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -242,7 +238,7 @@ exports[`crud should properly generate actions resolver classes for prisma model
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { FindUniqueUserArgs } from \\"./args/FindUniqueUserArgs\\";
 import { User } from \\"../../../models/User\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => User)
 export class FindUniqueUserResolver {
@@ -251,10 +247,9 @@ export class FindUniqueUserResolver {
   })
   async user(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueUserArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findUnique');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUnique', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findUnique');
-    const result = await getPrismaFromContext(ctx).user.findUnique({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findUnique(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -269,7 +264,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { GroupByUserArgs } from \\"./args/GroupByUserArgs\\";
 import { User } from \\"../../../models/User\\";
 import { UserGroupBy } from \\"../../outputs/UserGroupBy\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => User)
 export class GroupByUserResolver {
@@ -303,7 +298,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { UpdateManyUserArgs } from \\"./args/UpdateManyUserArgs\\";
 import { User } from \\"../../../models/User\\";
 import { AffectedRowsOutput } from \\"../../outputs/AffectedRowsOutput\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => User)
 export class UpdateManyUserResolver {
@@ -329,7 +324,7 @@ exports[`crud should properly generate actions resolver classes for prisma model
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { UpdateOneUserArgs } from \\"./args/UpdateOneUserArgs\\";
 import { User } from \\"../../../models/User\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => User)
 export class UpdateOneUserResolver {
@@ -355,7 +350,7 @@ exports[`crud should properly generate actions resolver classes for prisma model
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { UpsertOneUserArgs } from \\"./args/UpsertOneUserArgs\\";
 import { User } from \\"../../../models/User\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => User)
 export class UpsertOneUserResolver {
@@ -1151,7 +1146,7 @@ import { GroupByUserArgs } from \\"./args/GroupByUserArgs\\";
 import { UpdateManyUserArgs } from \\"./args/UpdateManyUserArgs\\";
 import { UpdateOneUserArgs } from \\"./args/UpdateOneUserArgs\\";
 import { UpsertOneUserArgs } from \\"./args/UpsertOneUserArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import { User } from \\"../../../models/User\\";
 import { AffectedRowsOutput } from \\"../../outputs/AffectedRowsOutput\\";
 import { AggregateUser } from \\"../../outputs/AggregateUser\\";
@@ -1248,10 +1243,9 @@ export class UserCrudResolver {
   })
   async findFirstUser(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindFirstUserArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findFirst');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findFirst', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findFirst');
-    const result = await getPrismaFromContext(ctx).user.findFirst({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findFirst(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -1262,10 +1256,9 @@ export class UserCrudResolver {
   })
   async findFirstUserOrThrow(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindFirstUserOrThrowArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findFirstOrThrow');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findFirstOrThrow', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findFirstOrThrow');
-    const result = await getPrismaFromContext(ctx).user.findFirstOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findFirstOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -1276,10 +1269,9 @@ export class UserCrudResolver {
   })
   async users(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindManyUserArgs): Promise<User[]> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findMany');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findMany', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findMany');
-    const result = await getPrismaFromContext(ctx).user.findMany({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findMany(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -1290,10 +1282,9 @@ export class UserCrudResolver {
   })
   async user(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueUserArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findUnique');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUnique', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findUnique');
-    const result = await getPrismaFromContext(ctx).user.findUnique({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findUnique(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -1304,10 +1295,9 @@ export class UserCrudResolver {
   })
   async getUser(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueUserOrThrowArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findUniqueOrThrow');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUniqueOrThrow', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findUniqueOrThrow');
-    const result = await getPrismaFromContext(ctx).user.findUniqueOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findUniqueOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -1440,7 +1430,7 @@ import { GroupByStaffArgs } from \\"./args/GroupByStaffArgs\\";
 import { UpdateManyStaffArgs } from \\"./args/UpdateManyStaffArgs\\";
 import { UpdateOneStaffArgs } from \\"./args/UpdateOneStaffArgs\\";
 import { UpsertOneStaffArgs } from \\"./args/UpsertOneStaffArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import { Staff } from \\"../../../models/Staff\\";
 import { AffectedRowsOutput } from \\"../../outputs/AffectedRowsOutput\\";
 import { AggregateStaff } from \\"../../outputs/AggregateStaff\\";
@@ -1537,10 +1527,9 @@ export class StaffCrudResolver {
   })
   async findFirstStaff(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindFirstStaffArgs): Promise<Staff | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'Staff', 'staff', 'findFirst');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'Staff', 'staff', 'findFirst', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'Staff', 'staff', 'findFirst');
-    const result = await getPrismaFromContext(ctx).staff.findFirst({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).staff.findFirst(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -1551,10 +1540,9 @@ export class StaffCrudResolver {
   })
   async findFirstStaffOrThrow(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindFirstStaffOrThrowArgs): Promise<Staff | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'Staff', 'staff', 'findFirstOrThrow');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'Staff', 'staff', 'findFirstOrThrow', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'Staff', 'staff', 'findFirstOrThrow');
-    const result = await getPrismaFromContext(ctx).staff.findFirstOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).staff.findFirstOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -1565,10 +1553,9 @@ export class StaffCrudResolver {
   })
   async staffMembers(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindManyStaffArgs): Promise<Staff[]> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'Staff', 'staff', 'findMany');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'Staff', 'staff', 'findMany', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'Staff', 'staff', 'findMany');
-    const result = await getPrismaFromContext(ctx).staff.findMany({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).staff.findMany(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -1579,10 +1566,9 @@ export class StaffCrudResolver {
   })
   async staff(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueStaffArgs): Promise<Staff | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'Staff', 'staff', 'findUnique');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'Staff', 'staff', 'findUnique', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'Staff', 'staff', 'findUnique');
-    const result = await getPrismaFromContext(ctx).staff.findUnique({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).staff.findUnique(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -1593,10 +1579,9 @@ export class StaffCrudResolver {
   })
   async getStaff(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueStaffOrThrowArgs): Promise<Staff | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'Staff', 'staff', 'findUniqueOrThrow');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'Staff', 'staff', 'findUniqueOrThrow', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'Staff', 'staff', 'findUniqueOrThrow');
-    const result = await getPrismaFromContext(ctx).staff.findUniqueOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).staff.findUniqueOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -1679,7 +1664,7 @@ import { GroupByStaffArgs } from \\"./args/GroupByStaffArgs\\";
 import { UpdateManyStaffArgs } from \\"./args/UpdateManyStaffArgs\\";
 import { UpdateOneStaffArgs } from \\"./args/UpdateOneStaffArgs\\";
 import { UpsertOneStaffArgs } from \\"./args/UpsertOneStaffArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import { Staff } from \\"../../../models/Staff\\";
 import { AffectedRowsOutput } from \\"../../outputs/AffectedRowsOutput\\";
 import { AggregateStaff } from \\"../../outputs/AggregateStaff\\";
@@ -1776,10 +1761,9 @@ export class StaffCrudResolver {
   })
   async findFirstStaff(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindFirstStaffArgs): Promise<Staff | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'Staff', 'staff', 'findFirst');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'Staff', 'staff', 'findFirst', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'Staff', 'staff', 'findFirst');
-    const result = await getPrismaFromContext(ctx).staff.findFirst({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).staff.findFirst(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -1790,10 +1774,9 @@ export class StaffCrudResolver {
   })
   async findFirstStaffOrThrow(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindFirstStaffOrThrowArgs): Promise<Staff | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'Staff', 'staff', 'findFirstOrThrow');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'Staff', 'staff', 'findFirstOrThrow', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'Staff', 'staff', 'findFirstOrThrow');
-    const result = await getPrismaFromContext(ctx).staff.findFirstOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).staff.findFirstOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -1804,10 +1787,9 @@ export class StaffCrudResolver {
   })
   async findManyStaff(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindManyStaffArgs): Promise<Staff[]> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'Staff', 'staff', 'findMany');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'Staff', 'staff', 'findMany', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'Staff', 'staff', 'findMany');
-    const result = await getPrismaFromContext(ctx).staff.findMany({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).staff.findMany(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -1818,10 +1800,9 @@ export class StaffCrudResolver {
   })
   async findUniqueStaff(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueStaffArgs): Promise<Staff | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'Staff', 'staff', 'findUnique');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'Staff', 'staff', 'findUnique', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'Staff', 'staff', 'findUnique');
-    const result = await getPrismaFromContext(ctx).staff.findUnique({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).staff.findUnique(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -1832,10 +1813,9 @@ export class StaffCrudResolver {
   })
   async findUniqueStaffOrThrow(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueStaffOrThrowArgs): Promise<Staff | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'Staff', 'staff', 'findUniqueOrThrow');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'Staff', 'staff', 'findUniqueOrThrow', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'Staff', 'staff', 'findUniqueOrThrow');
-    const result = await getPrismaFromContext(ctx).staff.findUniqueOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).staff.findUniqueOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -1905,7 +1885,7 @@ exports[`crud should properly generate resolver class when useOriginalMapping is
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { FindUniqueUserOrThrowArgs } from \\"./args/FindUniqueUserOrThrowArgs\\";
 import { User } from \\"../../../models/User\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => User)
 export class FindUniqueUserOrThrowResolver {
@@ -1914,10 +1894,9 @@ export class FindUniqueUserOrThrowResolver {
   })
   async findUniqueUserOrThrow(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueUserOrThrowArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findUniqueOrThrow');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUniqueOrThrow', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findUniqueOrThrow');
-    const result = await getPrismaFromContext(ctx).user.findUniqueOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findUniqueOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -1931,7 +1910,7 @@ exports[`crud should properly generate resolver class when useOriginalMapping is
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { FindUniqueUserArgs } from \\"./args/FindUniqueUserArgs\\";
 import { User } from \\"../../../models/User\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => User)
 export class FindUniqueUserResolver {
@@ -1940,10 +1919,9 @@ export class FindUniqueUserResolver {
   })
   async findUniqueUser(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueUserArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findUnique');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUnique', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findUnique');
-    const result = await getPrismaFromContext(ctx).user.findUnique({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findUnique(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -1970,7 +1948,7 @@ import { GroupByUserArgs } from \\"./args/GroupByUserArgs\\";
 import { UpdateManyUserArgs } from \\"./args/UpdateManyUserArgs\\";
 import { UpdateOneUserArgs } from \\"./args/UpdateOneUserArgs\\";
 import { UpsertOneUserArgs } from \\"./args/UpsertOneUserArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import { User } from \\"../../../models/User\\";
 import { AffectedRowsOutput } from \\"../../outputs/AffectedRowsOutput\\";
 import { AggregateUser } from \\"../../outputs/AggregateUser\\";
@@ -2067,10 +2045,9 @@ export class UserCrudResolver {
   })
   async findFirstUser(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindFirstUserArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findFirst');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findFirst', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findFirst');
-    const result = await getPrismaFromContext(ctx).user.findFirst({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findFirst(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -2081,10 +2058,9 @@ export class UserCrudResolver {
   })
   async findFirstUserOrThrow(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindFirstUserOrThrowArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findFirstOrThrow');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findFirstOrThrow', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findFirstOrThrow');
-    const result = await getPrismaFromContext(ctx).user.findFirstOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findFirstOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -2095,10 +2071,9 @@ export class UserCrudResolver {
   })
   async findManyUser(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindManyUserArgs): Promise<User[]> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findMany');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findMany', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findMany');
-    const result = await getPrismaFromContext(ctx).user.findMany({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findMany(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -2109,10 +2084,9 @@ export class UserCrudResolver {
   })
   async findUniqueUser(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueUserArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findUnique');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUnique', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findUnique');
-    const result = await getPrismaFromContext(ctx).user.findUnique({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findUnique(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -2123,10 +2097,9 @@ export class UserCrudResolver {
   })
   async findUniqueUserOrThrow(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueUserOrThrowArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findUniqueOrThrow');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUniqueOrThrow', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findUniqueOrThrow');
-    const result = await getPrismaFromContext(ctx).user.findUniqueOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findUniqueOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -2209,7 +2182,7 @@ import { GroupByUserArgs } from \\"./args/GroupByUserArgs\\";
 import { UpdateManyUserArgs } from \\"./args/UpdateManyUserArgs\\";
 import { UpdateOneUserArgs } from \\"./args/UpdateOneUserArgs\\";
 import { UpsertOneUserArgs } from \\"./args/UpsertOneUserArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import { User } from \\"../../../models/User\\";
 import { AffectedRowsOutput } from \\"../../outputs/AffectedRowsOutput\\";
 import { AggregateUser } from \\"../../outputs/AggregateUser\\";
@@ -2306,10 +2279,9 @@ export class UserCrudResolver {
   })
   async findFirstUser(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args((_type: any) => FindFirstUserArgs) args: FindFirstUserArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findFirst');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findFirst', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findFirst');
-    const result = await getPrismaFromContext(ctx).user.findFirst({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findFirst(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -2320,10 +2292,9 @@ export class UserCrudResolver {
   })
   async findFirstUserOrThrow(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args((_type: any) => FindFirstUserOrThrowArgs) args: FindFirstUserOrThrowArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findFirstOrThrow');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findFirstOrThrow', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findFirstOrThrow');
-    const result = await getPrismaFromContext(ctx).user.findFirstOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findFirstOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -2334,10 +2305,9 @@ export class UserCrudResolver {
   })
   async users(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args((_type: any) => FindManyUserArgs) args: FindManyUserArgs): Promise<User[]> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findMany');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findMany', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findMany');
-    const result = await getPrismaFromContext(ctx).user.findMany({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findMany(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -2348,10 +2318,9 @@ export class UserCrudResolver {
   })
   async user(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args((_type: any) => FindUniqueUserArgs) args: FindUniqueUserArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findUnique');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUnique', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findUnique');
-    const result = await getPrismaFromContext(ctx).user.findUnique({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findUnique(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -2362,10 +2331,9 @@ export class UserCrudResolver {
   })
   async getUser(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args((_type: any) => FindUniqueUserOrThrowArgs) args: FindUniqueUserOrThrowArgs): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findUniqueOrThrow');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUniqueOrThrow', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findUniqueOrThrow');
-    const result = await getPrismaFromContext(ctx).user.findUniqueOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findUniqueOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -2525,10 +2493,9 @@ let UserCrudResolver = class UserCrudResolver {
     }
     async findFirstUser(ctx, info, args) {
         const afterProcessEvents = [];
-        const { _count } = (0, helpers_1.transformInfoIntoPrismaArgs)(info, 'User', 'user', 'findFirst');
         const transformedArgsIntoPrismaArgs = await (0, helpers_1.transformArgsIntoPrismaArgs)(info, args, ctx, 'User', 'user', 'findFirst', afterProcessEvents);
-        const otherArgs = _count && (0, helpers_1.transformCountFieldIntoSelectRelationsCount)(_count, 'User', 'user', 'findFirst');
-        const result = await (0, helpers_1.getPrismaFromContext)(ctx).user.findFirst({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+        const prismaQuery = (0, helpers_1.buildPrismaQueryFromArgs)(transformedArgsIntoPrismaArgs, info);
+        const result = await (0, helpers_1.getPrismaFromContext)(ctx).user.findFirst(prismaQuery);
         for (const afterProcessEvent of afterProcessEvents) {
             await afterProcessEvent(result);
         }
@@ -2536,10 +2503,9 @@ let UserCrudResolver = class UserCrudResolver {
     }
     async findFirstUserOrThrow(ctx, info, args) {
         const afterProcessEvents = [];
-        const { _count } = (0, helpers_1.transformInfoIntoPrismaArgs)(info, 'User', 'user', 'findFirstOrThrow');
         const transformedArgsIntoPrismaArgs = await (0, helpers_1.transformArgsIntoPrismaArgs)(info, args, ctx, 'User', 'user', 'findFirstOrThrow', afterProcessEvents);
-        const otherArgs = _count && (0, helpers_1.transformCountFieldIntoSelectRelationsCount)(_count, 'User', 'user', 'findFirstOrThrow');
-        const result = await (0, helpers_1.getPrismaFromContext)(ctx).user.findFirstOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+        const prismaQuery = (0, helpers_1.buildPrismaQueryFromArgs)(transformedArgsIntoPrismaArgs, info);
+        const result = await (0, helpers_1.getPrismaFromContext)(ctx).user.findFirstOrThrow(prismaQuery);
         for (const afterProcessEvent of afterProcessEvents) {
             await afterProcessEvent(result);
         }
@@ -2547,10 +2513,9 @@ let UserCrudResolver = class UserCrudResolver {
     }
     async users(ctx, info, args) {
         const afterProcessEvents = [];
-        const { _count } = (0, helpers_1.transformInfoIntoPrismaArgs)(info, 'User', 'user', 'findMany');
         const transformedArgsIntoPrismaArgs = await (0, helpers_1.transformArgsIntoPrismaArgs)(info, args, ctx, 'User', 'user', 'findMany', afterProcessEvents);
-        const otherArgs = _count && (0, helpers_1.transformCountFieldIntoSelectRelationsCount)(_count, 'User', 'user', 'findMany');
-        const result = await (0, helpers_1.getPrismaFromContext)(ctx).user.findMany({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+        const prismaQuery = (0, helpers_1.buildPrismaQueryFromArgs)(transformedArgsIntoPrismaArgs, info);
+        const result = await (0, helpers_1.getPrismaFromContext)(ctx).user.findMany(prismaQuery);
         for (const afterProcessEvent of afterProcessEvents) {
             await afterProcessEvent(result);
         }
@@ -2558,10 +2523,9 @@ let UserCrudResolver = class UserCrudResolver {
     }
     async user(ctx, info, args) {
         const afterProcessEvents = [];
-        const { _count } = (0, helpers_1.transformInfoIntoPrismaArgs)(info, 'User', 'user', 'findUnique');
         const transformedArgsIntoPrismaArgs = await (0, helpers_1.transformArgsIntoPrismaArgs)(info, args, ctx, 'User', 'user', 'findUnique', afterProcessEvents);
-        const otherArgs = _count && (0, helpers_1.transformCountFieldIntoSelectRelationsCount)(_count, 'User', 'user', 'findUnique');
-        const result = await (0, helpers_1.getPrismaFromContext)(ctx).user.findUnique({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+        const prismaQuery = (0, helpers_1.buildPrismaQueryFromArgs)(transformedArgsIntoPrismaArgs, info);
+        const result = await (0, helpers_1.getPrismaFromContext)(ctx).user.findUnique(prismaQuery);
         for (const afterProcessEvent of afterProcessEvents) {
             await afterProcessEvent(result);
         }
@@ -2569,10 +2533,9 @@ let UserCrudResolver = class UserCrudResolver {
     }
     async getUser(ctx, info, args) {
         const afterProcessEvents = [];
-        const { _count } = (0, helpers_1.transformInfoIntoPrismaArgs)(info, 'User', 'user', 'findUniqueOrThrow');
         const transformedArgsIntoPrismaArgs = await (0, helpers_1.transformArgsIntoPrismaArgs)(info, args, ctx, 'User', 'user', 'findUniqueOrThrow', afterProcessEvents);
-        const otherArgs = _count && (0, helpers_1.transformCountFieldIntoSelectRelationsCount)(_count, 'User', 'user', 'findUniqueOrThrow');
-        const result = await (0, helpers_1.getPrismaFromContext)(ctx).user.findUniqueOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+        const prismaQuery = (0, helpers_1.buildPrismaQueryFromArgs)(transformedArgsIntoPrismaArgs, info);
+        const result = await (0, helpers_1.getPrismaFromContext)(ctx).user.findUniqueOrThrow(prismaQuery);
         for (const afterProcessEvent of afterProcessEvents) {
             await afterProcessEvent(result);
         }
@@ -2835,6 +2798,8 @@ import {
   transformInfoIntoPrismaArgs,
   getPrismaFromContext,
   transformCountFieldIntoSelectRelationsCount,
+  buildPrismaQueryFromArgs,
+  buildPrismaQueryFromArgsWithInclude,
   InlineLoader,
 } from \\"../../../helpers\\";
 import { User } from \\"../../../models/User\\";
@@ -3104,12 +3069,6 @@ export class UserCrudResolver {
     @Args() args: FindFirstUserArgs,
   ): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(
-      info,
-      \\"User\\",
-      \\"user\\",
-      \\"findFirst\\",
-    );
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(
       info,
       args,
@@ -3119,18 +3078,11 @@ export class UserCrudResolver {
       \\"findFirst\\",
       afterProcessEvents,
     );
-    const otherArgs =
-      _count &&
-      transformCountFieldIntoSelectRelationsCount(
-        _count,
-        \\"User\\",
-        \\"user\\",
-        \\"findFirst\\",
-      );
-    const result = await getPrismaFromContext(ctx).user.findFirst({
-      ...transformedArgsIntoPrismaArgs,
-      ...otherArgs,
-    });
+    const prismaQuery = buildPrismaQueryFromArgs(
+      transformedArgsIntoPrismaArgs,
+      info,
+    );
+    const result = await getPrismaFromContext(ctx).user.findFirst(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) {
       await afterProcessEvent(result);
     }
@@ -3147,12 +3099,6 @@ export class UserCrudResolver {
     @Args() args: FindFirstUserOrThrowArgs,
   ): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(
-      info,
-      \\"User\\",
-      \\"user\\",
-      \\"findFirstOrThrow\\",
-    );
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(
       info,
       args,
@@ -3162,18 +3108,12 @@ export class UserCrudResolver {
       \\"findFirstOrThrow\\",
       afterProcessEvents,
     );
-    const otherArgs =
-      _count &&
-      transformCountFieldIntoSelectRelationsCount(
-        _count,
-        \\"User\\",
-        \\"user\\",
-        \\"findFirstOrThrow\\",
-      );
-    const result = await getPrismaFromContext(ctx).user.findFirstOrThrow({
-      ...transformedArgsIntoPrismaArgs,
-      ...otherArgs,
-    });
+    const prismaQuery = buildPrismaQueryFromArgs(
+      transformedArgsIntoPrismaArgs,
+      info,
+    );
+    const result =
+      await getPrismaFromContext(ctx).user.findFirstOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) {
       await afterProcessEvent(result);
     }
@@ -3190,12 +3130,6 @@ export class UserCrudResolver {
     @Args() args: FindManyUserArgs,
   ): Promise<User[]> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(
-      info,
-      \\"User\\",
-      \\"user\\",
-      \\"findMany\\",
-    );
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(
       info,
       args,
@@ -3205,18 +3139,11 @@ export class UserCrudResolver {
       \\"findMany\\",
       afterProcessEvents,
     );
-    const otherArgs =
-      _count &&
-      transformCountFieldIntoSelectRelationsCount(
-        _count,
-        \\"User\\",
-        \\"user\\",
-        \\"findMany\\",
-      );
-    const result = await getPrismaFromContext(ctx).user.findMany({
-      ...transformedArgsIntoPrismaArgs,
-      ...otherArgs,
-    });
+    const prismaQuery = buildPrismaQueryFromArgs(
+      transformedArgsIntoPrismaArgs,
+      info,
+    );
+    const result = await getPrismaFromContext(ctx).user.findMany(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) {
       await afterProcessEvent(result);
     }
@@ -3233,12 +3160,6 @@ export class UserCrudResolver {
     @Args() args: FindUniqueUserArgs,
   ): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(
-      info,
-      \\"User\\",
-      \\"user\\",
-      \\"findUnique\\",
-    );
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(
       info,
       args,
@@ -3248,18 +3169,11 @@ export class UserCrudResolver {
       \\"findUnique\\",
       afterProcessEvents,
     );
-    const otherArgs =
-      _count &&
-      transformCountFieldIntoSelectRelationsCount(
-        _count,
-        \\"User\\",
-        \\"user\\",
-        \\"findUnique\\",
-      );
-    const result = await getPrismaFromContext(ctx).user.findUnique({
-      ...transformedArgsIntoPrismaArgs,
-      ...otherArgs,
-    });
+    const prismaQuery = buildPrismaQueryFromArgs(
+      transformedArgsIntoPrismaArgs,
+      info,
+    );
+    const result = await getPrismaFromContext(ctx).user.findUnique(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) {
       await afterProcessEvent(result);
     }
@@ -3276,12 +3190,6 @@ export class UserCrudResolver {
     @Args() args: FindUniqueUserOrThrowArgs,
   ): Promise<User | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(
-      info,
-      \\"User\\",
-      \\"user\\",
-      \\"findUniqueOrThrow\\",
-    );
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(
       info,
       args,
@@ -3291,18 +3199,12 @@ export class UserCrudResolver {
       \\"findUniqueOrThrow\\",
       afterProcessEvents,
     );
-    const otherArgs =
-      _count &&
-      transformCountFieldIntoSelectRelationsCount(
-        _count,
-        \\"User\\",
-        \\"user\\",
-        \\"findUniqueOrThrow\\",
-      );
-    const result = await getPrismaFromContext(ctx).user.findUniqueOrThrow({
-      ...transformedArgsIntoPrismaArgs,
-      ...otherArgs,
-    });
+    const prismaQuery = buildPrismaQueryFromArgs(
+      transformedArgsIntoPrismaArgs,
+      info,
+    );
+    const result =
+      await getPrismaFromContext(ctx).user.findUniqueOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) {
       await afterProcessEvent(result);
     }
@@ -3500,7 +3402,7 @@ import { GroupByUserArgs } from \\"./args/GroupByUserArgs\\";
 import { UpdateManyUserArgs } from \\"./args/UpdateManyUserArgs\\";
 import { UpdateOneUserArgs } from \\"./args/UpdateOneUserArgs\\";
 import { UpsertOneUserArgs } from \\"./args/UpsertOneUserArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import { User } from \\"../../../models/User\\";
 import { AffectedRowsOutput } from \\"../../outputs/AffectedRowsOutput\\";
 import { AggregateUser } from \\"../../outputs/AggregateUser\\";
@@ -3596,12 +3498,11 @@ export class UserCrudResolver {
             nullable: true
         })
     async findFirstUser(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindFirstUserArgs): Promise<User | null> {
-         const afterProcessEvents: ((result:any) => Promise<any>)[] = [];
-         const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findFirst');
-         const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findFirst', afterProcessEvents);
-         const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findFirst');
-         const result = await getPrismaFromContext(ctx).user.findFirst({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
-         for (const afterProcessEvent of afterProcessEvents){ await afterProcessEvent(result); }
+        const afterProcessEvents: ((result:any) => Promise<any>)[] = [];
+        const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findFirst', afterProcessEvents);
+        const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+        const result = await getPrismaFromContext(ctx).user.findFirst(prismaQuery);
+        for (const afterProcessEvent of afterProcessEvents){ await afterProcessEvent(result); }
 
         return result;
     }
@@ -3610,12 +3511,11 @@ export class UserCrudResolver {
             nullable: true
         })
     async findFirstUserOrThrow(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindFirstUserOrThrowArgs): Promise<User | null> {
-         const afterProcessEvents: ((result:any) => Promise<any>)[] = [];
-         const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findFirstOrThrow');
-         const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findFirstOrThrow', afterProcessEvents);
-         const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findFirstOrThrow');
-         const result = await getPrismaFromContext(ctx).user.findFirstOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
-         for (const afterProcessEvent of afterProcessEvents){ await afterProcessEvent(result); }
+        const afterProcessEvents: ((result:any) => Promise<any>)[] = [];
+        const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findFirstOrThrow', afterProcessEvents);
+        const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+        const result = await getPrismaFromContext(ctx).user.findFirstOrThrow(prismaQuery);
+        for (const afterProcessEvent of afterProcessEvents){ await afterProcessEvent(result); }
 
         return result;
     }
@@ -3624,12 +3524,11 @@ export class UserCrudResolver {
             nullable: false
         })
     async users(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindManyUserArgs): Promise<User[]> {
-         const afterProcessEvents: ((result:any) => Promise<any>)[] = [];
-         const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findMany');
-         const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findMany', afterProcessEvents);
-         const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findMany');
-         const result = await getPrismaFromContext(ctx).user.findMany({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
-         for (const afterProcessEvent of afterProcessEvents){ await afterProcessEvent(result); }
+        const afterProcessEvents: ((result:any) => Promise<any>)[] = [];
+        const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findMany', afterProcessEvents);
+        const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+        const result = await getPrismaFromContext(ctx).user.findMany(prismaQuery);
+        for (const afterProcessEvent of afterProcessEvents){ await afterProcessEvent(result); }
 
         return result;
     }
@@ -3638,12 +3537,11 @@ export class UserCrudResolver {
             nullable: true
         })
     async user(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueUserArgs): Promise<User | null> {
-         const afterProcessEvents: ((result:any) => Promise<any>)[] = [];
-         const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findUnique');
-         const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUnique', afterProcessEvents);
-         const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findUnique');
-         const result = await getPrismaFromContext(ctx).user.findUnique({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
-         for (const afterProcessEvent of afterProcessEvents){ await afterProcessEvent(result); }
+        const afterProcessEvents: ((result:any) => Promise<any>)[] = [];
+        const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUnique', afterProcessEvents);
+        const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+        const result = await getPrismaFromContext(ctx).user.findUnique(prismaQuery);
+        for (const afterProcessEvent of afterProcessEvents){ await afterProcessEvent(result); }
 
         return result;
     }
@@ -3652,12 +3550,11 @@ export class UserCrudResolver {
             nullable: true
         })
     async getUser(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueUserOrThrowArgs): Promise<User | null> {
-         const afterProcessEvents: ((result:any) => Promise<any>)[] = [];
-         const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findUniqueOrThrow');
-         const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUniqueOrThrow', afterProcessEvents);
-         const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findUniqueOrThrow');
-         const result = await getPrismaFromContext(ctx).user.findUniqueOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
-         for (const afterProcessEvent of afterProcessEvents){ await afterProcessEvent(result); }
+        const afterProcessEvents: ((result:any) => Promise<any>)[] = [];
+        const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUniqueOrThrow', afterProcessEvents);
+        const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+        const result = await getPrismaFromContext(ctx).user.findUniqueOrThrow(prismaQuery);
+        for (const afterProcessEvent of afterProcessEvents){ await afterProcessEvent(result); }
 
         return result;
     }
@@ -3727,7 +3624,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { AggregateClientArgs } from \\"./args/AggregateClientArgs\\";
 import { Client } from \\"../../../models/Client\\";
 import { AggregateClient } from \\"../../outputs/AggregateClient\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => Client)
 export class AggregateClientResolver {
@@ -3753,7 +3650,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { CreateManyAndReturnClientArgs } from \\"./args/CreateManyAndReturnClientArgs\\";
 import { Client } from \\"../../../models/Client\\";
 import { CreateManyAndReturnClient } from \\"../../outputs/CreateManyAndReturnClient\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => Client)
 export class CreateManyAndReturnClientResolver {
@@ -3780,7 +3677,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { CreateManyClientArgs } from \\"./args/CreateManyClientArgs\\";
 import { Client } from \\"../../../models/Client\\";
 import { AffectedRowsOutput } from \\"../../outputs/AffectedRowsOutput\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => Client)
 export class CreateManyClientResolver {
@@ -3806,7 +3703,7 @@ exports[`crud when model is renamed should properly generate actions resolver cl
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { CreateOneClientArgs } from \\"./args/CreateOneClientArgs\\";
 import { Client } from \\"../../../models/Client\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => Client)
 export class CreateOneClientResolver {
@@ -3833,7 +3730,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { DeleteManyClientArgs } from \\"./args/DeleteManyClientArgs\\";
 import { Client } from \\"../../../models/Client\\";
 import { AffectedRowsOutput } from \\"../../outputs/AffectedRowsOutput\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => Client)
 export class DeleteManyClientResolver {
@@ -3859,7 +3756,7 @@ exports[`crud when model is renamed should properly generate actions resolver cl
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { DeleteOneClientArgs } from \\"./args/DeleteOneClientArgs\\";
 import { Client } from \\"../../../models/Client\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => Client)
 export class DeleteOneClientResolver {
@@ -3885,7 +3782,7 @@ exports[`crud when model is renamed should properly generate actions resolver cl
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { FindFirstClientArgs } from \\"./args/FindFirstClientArgs\\";
 import { Client } from \\"../../../models/Client\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => Client)
 export class FindFirstClientResolver {
@@ -3894,10 +3791,9 @@ export class FindFirstClientResolver {
   })
   async findFirstClient(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindFirstClientArgs): Promise<Client | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findFirst');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findFirst', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findFirst');
-    const result = await getPrismaFromContext(ctx).user.findFirst({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findFirst(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -3911,7 +3807,7 @@ exports[`crud when model is renamed should properly generate actions resolver cl
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { FindManyClientArgs } from \\"./args/FindManyClientArgs\\";
 import { Client } from \\"../../../models/Client\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => Client)
 export class FindManyClientResolver {
@@ -3920,10 +3816,9 @@ export class FindManyClientResolver {
   })
   async clients(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindManyClientArgs): Promise<Client[]> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findMany');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findMany', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findMany');
-    const result = await getPrismaFromContext(ctx).user.findMany({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findMany(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -3937,7 +3832,7 @@ exports[`crud when model is renamed should properly generate actions resolver cl
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { FindUniqueClientArgs } from \\"./args/FindUniqueClientArgs\\";
 import { Client } from \\"../../../models/Client\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => Client)
 export class FindUniqueClientResolver {
@@ -3946,10 +3841,9 @@ export class FindUniqueClientResolver {
   })
   async client(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueClientArgs): Promise<Client | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findUnique');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUnique', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findUnique');
-    const result = await getPrismaFromContext(ctx).user.findUnique({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findUnique(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -3964,7 +3858,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { GroupByClientArgs } from \\"./args/GroupByClientArgs\\";
 import { Client } from \\"../../../models/Client\\";
 import { ClientGroupBy } from \\"../../outputs/ClientGroupBy\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => Client)
 export class GroupByClientResolver {
@@ -3991,7 +3885,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { UpdateManyClientArgs } from \\"./args/UpdateManyClientArgs\\";
 import { Client } from \\"../../../models/Client\\";
 import { AffectedRowsOutput } from \\"../../outputs/AffectedRowsOutput\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => Client)
 export class UpdateManyClientResolver {
@@ -4017,7 +3911,7 @@ exports[`crud when model is renamed should properly generate actions resolver cl
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { UpdateOneClientArgs } from \\"./args/UpdateOneClientArgs\\";
 import { Client } from \\"../../../models/Client\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => Client)
 export class UpdateOneClientResolver {
@@ -4043,7 +3937,7 @@ exports[`crud when model is renamed should properly generate actions resolver cl
 import type { GraphQLResolveInfo } from \\"graphql\\";
 import { UpsertOneClientArgs } from \\"./args/UpsertOneClientArgs\\";
 import { Client } from \\"../../../models/Client\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => Client)
 export class UpsertOneClientResolver {
@@ -4422,7 +4316,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { AggregateMainUserArgs } from \\"./args/AggregateMainUserArgs\\";
 import { MainUser } from \\"../../../models/MainUser\\";
 import { AggregateMainUser } from \\"../../outputs/AggregateMainUser\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => MainUser)
 export class AggregateMainUserResolver {
@@ -4460,7 +4354,7 @@ import { GroupByClientArgs } from \\"./args/GroupByClientArgs\\";
 import { UpdateManyClientArgs } from \\"./args/UpdateManyClientArgs\\";
 import { UpdateOneClientArgs } from \\"./args/UpdateOneClientArgs\\";
 import { UpsertOneClientArgs } from \\"./args/UpsertOneClientArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import { Client } from \\"../../../models/Client\\";
 import { AffectedRowsOutput } from \\"../../outputs/AffectedRowsOutput\\";
 import { AggregateClient } from \\"../../outputs/AggregateClient\\";
@@ -4557,10 +4451,9 @@ export class ClientCrudResolver {
   })
   async findFirstClient(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindFirstClientArgs): Promise<Client | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findFirst');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findFirst', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findFirst');
-    const result = await getPrismaFromContext(ctx).user.findFirst({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findFirst(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -4571,10 +4464,9 @@ export class ClientCrudResolver {
   })
   async findFirstClientOrThrow(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindFirstClientOrThrowArgs): Promise<Client | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findFirstOrThrow');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findFirstOrThrow', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findFirstOrThrow');
-    const result = await getPrismaFromContext(ctx).user.findFirstOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findFirstOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -4585,10 +4477,9 @@ export class ClientCrudResolver {
   })
   async findManyClient(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindManyClientArgs): Promise<Client[]> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findMany');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findMany', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findMany');
-    const result = await getPrismaFromContext(ctx).user.findMany({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findMany(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -4599,10 +4490,9 @@ export class ClientCrudResolver {
   })
   async findUniqueClient(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueClientArgs): Promise<Client | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findUnique');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUnique', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findUnique');
-    const result = await getPrismaFromContext(ctx).user.findUnique({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findUnique(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -4613,10 +4503,9 @@ export class ClientCrudResolver {
   })
   async findUniqueClientOrThrow(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueClientOrThrowArgs): Promise<Client | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findUniqueOrThrow');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUniqueOrThrow', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findUniqueOrThrow');
-    const result = await getPrismaFromContext(ctx).user.findUniqueOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findUniqueOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -4687,7 +4576,7 @@ import type { GraphQLResolveInfo } from \\"graphql\\";
 import { GroupByMainUserArgs } from \\"./args/GroupByMainUserArgs\\";
 import { MainUser } from \\"../../../models/MainUser\\";
 import { MainUserGroupBy } from \\"../../outputs/MainUserGroupBy\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 
 @Resolver((_of: any) => MainUser)
 export class GroupByMainUserResolver {
@@ -4726,7 +4615,7 @@ import { GroupByMainUserArgs } from \\"./args/GroupByMainUserArgs\\";
 import { UpdateManyMainUserArgs } from \\"./args/UpdateManyMainUserArgs\\";
 import { UpdateOneMainUserArgs } from \\"./args/UpdateOneMainUserArgs\\";
 import { UpsertOneMainUserArgs } from \\"./args/UpsertOneMainUserArgs\\";
-import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, InlineLoader } from \\"../../../helpers\\";
+import { transformArgsIntoPrismaArgs, transformInfoIntoPrismaArgs, getPrismaFromContext, transformCountFieldIntoSelectRelationsCount, buildPrismaQueryFromArgs, buildPrismaQueryFromArgsWithInclude, InlineLoader } from \\"../../../helpers\\";
 import { MainUser } from \\"../../../models/MainUser\\";
 import { AffectedRowsOutput } from \\"../../outputs/AffectedRowsOutput\\";
 import { AggregateMainUser } from \\"../../outputs/AggregateMainUser\\";
@@ -4823,10 +4712,9 @@ export class MainUserCrudResolver {
   })
   async findFirstMainUser(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindFirstMainUserArgs): Promise<MainUser | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findFirst');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findFirst', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findFirst');
-    const result = await getPrismaFromContext(ctx).user.findFirst({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findFirst(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -4837,10 +4725,9 @@ export class MainUserCrudResolver {
   })
   async findFirstMainUserOrThrow(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindFirstMainUserOrThrowArgs): Promise<MainUser | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findFirstOrThrow');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findFirstOrThrow', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findFirstOrThrow');
-    const result = await getPrismaFromContext(ctx).user.findFirstOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findFirstOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -4851,10 +4738,9 @@ export class MainUserCrudResolver {
   })
   async mainUsers(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindManyMainUserArgs): Promise<MainUser[]> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findMany');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findMany', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findMany');
-    const result = await getPrismaFromContext(ctx).user.findMany({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findMany(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -4865,10 +4751,9 @@ export class MainUserCrudResolver {
   })
   async mainUser(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueMainUserArgs): Promise<MainUser | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findUnique');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUnique', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findUnique');
-    const result = await getPrismaFromContext(ctx).user.findUnique({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findUnique(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;
@@ -4879,10 +4764,9 @@ export class MainUserCrudResolver {
   })
   async getMainUser(@Context() ctx: any, @Info() info: GraphQLResolveInfo, @Args() args: FindUniqueMainUserOrThrowArgs): Promise<MainUser | null> {
     const afterProcessEvents: ((result: any) => Promise<any>)[] = [];
-    const { _count } = transformInfoIntoPrismaArgs(info, 'User', 'user', 'findUniqueOrThrow');
     const transformedArgsIntoPrismaArgs = await transformArgsIntoPrismaArgs(info, args, ctx, 'User', 'user', 'findUniqueOrThrow', afterProcessEvents);
-    const otherArgs = _count && transformCountFieldIntoSelectRelationsCount(_count, 'User', 'user', 'findUniqueOrThrow');
-    const result = await getPrismaFromContext(ctx).user.findUniqueOrThrow({ ...transformedArgsIntoPrismaArgs, ...otherArgs, });
+    const prismaQuery = buildPrismaQueryFromArgs(transformedArgsIntoPrismaArgs, info);
+    const result = await getPrismaFromContext(ctx).user.findUniqueOrThrow(prismaQuery);
     for (const afterProcessEvent of afterProcessEvents) { await afterProcessEvent(result); }
 
     return result;

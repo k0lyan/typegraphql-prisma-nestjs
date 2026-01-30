@@ -1,24 +1,24 @@
 import {
-  SourceFile,
-  OptionalKind,
   ExportDeclarationStructure,
+  OptionalKind,
+  SourceFile,
   VariableDeclarationKind,
 } from "ts-morph";
-import path from "path";
-
 import {
-  modelsFolderName,
+  argsFolderName,
+  crudResolversFolderName,
   enumsFolderName,
   inputsFolderName,
-  argsFolderName,
+  modelsFolderName,
   outputsFolderName,
-  resolversFolderName,
-  crudResolversFolderName,
   relationsResolversFolderName,
+  resolversFolderName,
 } from "./config";
+
+import { EmitBlockKind } from "./emit-block";
 import { GenerateMappingData } from "./types";
 import { GeneratorOptions } from "./options";
-import { EmitBlockKind } from "./emit-block";
+import path from "path";
 
 export function generateTypeGraphQLImport(sourceFile: SourceFile) {
   sourceFile.addImportDeclaration({
@@ -92,6 +92,8 @@ export function generateHelpersFileImport(sourceFile: SourceFile, level = 0) {
       "transformInfoIntoPrismaArgs",
       "getPrismaFromContext",
       "transformCountFieldIntoSelectRelationsCount",
+      "buildPrismaQueryFromArgs",
+      "buildPrismaQueryFromArgsWithInclude",
       "InlineLoader",
     ],
   });

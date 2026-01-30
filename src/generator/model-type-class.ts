@@ -8,6 +8,7 @@ import {
 import {
   generateCustomScalarsImport,
   generateEnumsImports,
+  generateForwardRefImport,
   generateGraphQLScalarsImport,
   generateModelsImports,
   generatePrismaNamespaceImport,
@@ -38,6 +39,13 @@ export default function generateObjectTypeClassFromModel(
   generateGraphQLScalarsImport(sourceFile);
   generatePrismaNamespaceImport(sourceFile, dmmfDocument.options, 1);
   generateCustomScalarsImport(sourceFile, 1);
+
+  // Check if model has relation fields to determine if forwardRef import is needed
+  const relationFields = model.fields.filter(field => !!field.relationName);
+  if (relationFields.length > 0) {
+    generateForwardRefImport(sourceFile);
+  }
+
   generateModelsImports(
     sourceFile,
     model.fields
@@ -102,6 +110,17 @@ export default function generateObjectTypeClassFromModel(
           ? !field.isList && !field.isRequired
           : false;
 
+        // For relation fields, extract the base type (without array brackets) for forwardRef
+        const getRelationTypeExpression = () => {
+          // Get the base type name (e.g., "City" from "[City]" or "City")
+          const baseType = field.typeGraphQLType.replace(/^\[|\]$/g, "");
+          // Wrap in array if it's a list
+          if (field.isList) {
+            return `[forwardRef(() => ${baseType})]`;
+          }
+          return `forwardRef(() => ${baseType})`;
+        };
+
         return {
           name: field.name,
           type: field.fieldTSType,
@@ -116,7 +135,7 @@ export default function generateObjectTypeClassFromModel(
                     {
                       name: "Field",
                       arguments: [
-                        `(_type: any) => ${field.typeGraphQLType}`,
+                        `(_type: any) => ${getRelationTypeExpression()}`,
                         Writers.object({
                           nullable: `${isRelationNullable}`,
                           ...(field.docs && { description: `"${field.docs}"` }),

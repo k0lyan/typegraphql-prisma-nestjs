@@ -44,6 +44,13 @@ export function generateTypeGraphQLImport(sourceFile: SourceFile) {
   });
 }
 
+export function generateForwardRefImport(sourceFile: SourceFile) {
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: "@nestjs/common",
+    namedImports: ["forwardRef"],
+  });
+}
+
 export function generateGraphQLFieldsImport(sourceFile: SourceFile) {
   sourceFile.addImportDeclaration({
     moduleSpecifier: "graphql-fields",

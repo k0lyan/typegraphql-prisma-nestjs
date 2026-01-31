@@ -1,8 +1,9 @@
 import "reflect-metadata";
-import { promises as fs } from "fs";
-import { buildNestSchema, resetForNewSchema } from "../helpers/build-schema";
-import { graphql, GraphQLSchema } from "graphql";
 
+import { GraphQLSchema, graphql } from "graphql";
+import { buildNestSchema, resetForNewSchema } from "../helpers/build-schema";
+
+import { promises as fs } from "fs";
 import generateArtifactsDirPath from "../helpers/artifacts-dir";
 import { generateCodeFromSchema } from "../helpers/generate-code";
 

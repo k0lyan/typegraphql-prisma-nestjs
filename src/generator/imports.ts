@@ -362,6 +362,18 @@ export function generateResolversIndexFile(
 }
 
 export const generateModelsImports = createImportGenerator(modelsFolderName);
+export const generateModelsImportsTypeOnly = createImportGenerator(
+  modelsFolderName,
+  false,
+  true, // Type-only imports to avoid circular dependency issues with forwardRef
+);
+// Use barrel import for models to avoid circular dependency issues between model files
+// The barrel (index.ts) exports all models, and the import order is handled by the module system
+export const generateModelsImportsFromBarrel = createImportGenerator(
+  modelsFolderName,
+  true, // Use barrel import
+  false,
+);
 export const generateEnumsImports = createImportGenerator(enumsFolderName);
 export const generateInputsImports = createImportGenerator(
   inputsFolderName,

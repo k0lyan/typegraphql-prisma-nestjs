@@ -178,10 +178,6 @@ export class User {
   /**
    * relation doc
    */
-  @Field((_type: any) => [Post], {
-    nullable: false,
-    description: \\"relation doc\\"
-  })
   posts?: Post[];
 
   @Field((_type: any) => UserCount, {
@@ -459,9 +455,6 @@ export class Article {
   })
   id!: number;
 
-  @Field((_type: any) => Client, {
-    nullable: false
-  })
   author?: Client;
 
   @Field((_type: any) => Int, {
@@ -487,9 +480,6 @@ export class Client {
   })
   id!: number;
 
-  @Field((_type: any) => [Article], {
-    nullable: false
-  })
   posts?: Article[];
 
   @Field((_type: any) => ClientCount, {
@@ -514,9 +504,6 @@ export class Post {
   })
   id!: number;
 
-  @Field((_type: any) => User, {
-    nullable: false
-  })
   author?: User;
 
   @Field((_type: any) => Int, {
@@ -542,9 +529,6 @@ export class User {
   })
   id!: number;
 
-  @Field((_type: any) => [Post], {
-    nullable: false
-  })
   posts?: Post[];
 
   @Field((_type: any) => UserCount, {
@@ -574,9 +558,6 @@ export class Service {
   })
   name!: string;
 
-  @Field((_type: any) => Service, {
-    nullable: true
-  })
   sourceService?: Service | null;
 
   @Field((_type: any) => Int, {
@@ -584,9 +565,6 @@ export class Service {
   })
   sourceId?: number | null;
 
-  @Field((_type: any) => [Service], {
-    nullable: false
-  })
   services?: Service[];
 
   @Field((_type: any) => ServiceCount, {

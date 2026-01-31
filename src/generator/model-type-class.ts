@@ -8,7 +8,6 @@ import {
 import {
   generateCustomScalarsImport,
   generateEnumsImports,
-  generateForwardRefImport,
   generateGraphQLScalarsImport,
   generateModelsImports,
   generatePrismaNamespaceImport,
@@ -40,12 +39,8 @@ export default function generateObjectTypeClassFromModel(
   generatePrismaNamespaceImport(sourceFile, dmmfDocument.options, 1);
   generateCustomScalarsImport(sourceFile, 1);
 
-  // Check if model has relation fields to determine if forwardRef import is needed
-  const relationFields = model.fields.filter(field => !!field.relationName);
-  if (relationFields.length > 0) {
-    generateForwardRefImport(sourceFile);
-  }
-
+  // Import related models for TypeScript type annotations
+  // Relations are resolved via @ResolveField in relation resolvers, not via @Field decorator
   generateModelsImports(
     sourceFile,
     model.fields
@@ -104,23 +99,6 @@ export default function generateObjectTypeClassFromModel(
           field.isOmitted.output ||
           (!field.isRequired && field.typeFieldAlias === undefined);
 
-        // For relation fields, determine nullability based on isList and isRequired
-        // Arrays are never nullable (empty array instead), single relations depend on isRequired
-        const isRelationNullable = isRelation
-          ? !field.isList && !field.isRequired
-          : false;
-
-        // For relation fields, extract the base type (without array brackets) for forwardRef
-        const getRelationTypeExpression = () => {
-          // Get the base type name (e.g., "City" from "[City]" or "City")
-          const baseType = field.typeGraphQLType.replace(/^\[|\]$/g, "");
-          // Wrap in array if it's a list
-          if (field.isList) {
-            return `[forwardRef(() => ${baseType})]`;
-          }
-          return `forwardRef(() => ${baseType})`;
-        };
-
         return {
           name: field.name,
           type: field.fieldTSType,
@@ -128,33 +106,22 @@ export default function generateObjectTypeClassFromModel(
           hasQuestionToken: isOptional,
           trailingTrivia: "\r\n",
           decorators: [
-            ...(field.typeFieldAlias || field.isOmitted.output
+            // Don't emit @Field for relation fields - they are resolved via @ResolveField in relation resolvers
+            // This avoids circular dependency issues between model classes
+            ...(field.typeFieldAlias || field.isOmitted.output || isRelation
               ? []
-              : isRelation
-                ? [
-                    {
-                      name: "Field",
-                      arguments: [
-                        `(_type: any) => ${getRelationTypeExpression()}`,
-                        Writers.object({
-                          nullable: `${isRelationNullable}`,
-                          ...(field.docs && { description: `"${field.docs}"` }),
-                        }),
-                      ],
-                    },
-                  ]
-                : [
-                    {
-                      name: "Field",
-                      arguments: [
-                        `(_type: any) => ${field.typeGraphQLType}`,
-                        Writers.object({
-                          nullable: `${!!field.isOptional.output || isOptional}`,
-                          ...(field.docs && { description: `"${field.docs}"` }),
-                        }),
-                      ],
-                    },
-                  ]),
+              : [
+                  {
+                    name: "Field",
+                    arguments: [
+                      `(_type: any) => ${field.typeGraphQLType}`,
+                      Writers.object({
+                        nullable: `${!!field.isOptional.output || isOptional}`,
+                        ...(field.docs && { description: `"${field.docs}"` }),
+                      }),
+                    ],
+                  },
+                ]),
           ],
           ...(field.docs && {
             docs: [{ description: `\n${convertNewLines(field.docs)}` }],
